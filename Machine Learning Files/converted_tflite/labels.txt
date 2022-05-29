@@ -1,0 +1,4 @@
+0 Chair
+1 Table
+2 Bed
+3 Frige
