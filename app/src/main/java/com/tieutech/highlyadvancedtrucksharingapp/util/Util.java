@@ -64,7 +64,11 @@ public class Util{
     public static final String ORDER_LENGTH = "order_length";
     public static final String ORDER_HEIGHT = "order_height";
     public static final String ORDER_VEHICLE_TYPE = "order_vehicle_type";
-    public static final String ORDER_GOOD_DESCRIPTION = "good_description";
+    public static final String ORDER_GOOD_DESCRIPTION = "order_good_description";
+
+    public static final String ORDER_GOOD_IMAGE = "order_good_image";
+    public static final String ORDER_GOOD_CLASSIFICATION = "order_good_classification";
+    public static final String ORDER_GOOD_CLASSIFICATION_CONFIDENCE = "order_good_classification_confidence";
 
     //Order data for putExtra (for data passed between activities)
     public static final String DATA_SENDER_IMAGE = "data_sender_image";
@@ -84,6 +88,13 @@ public class Util{
     public static final String DATA_LENGTH = "data_length";
     public static final String DATA_HEIGHT = "data_weight";
     public static final String DATA_VEHICLE_TYPE = "data_vehicle_type";
+
+    public static final String DATA_GOOD_IMAGE = "data_good_image";
+    public static final String DATA_GOOD_CLASSIFICATION = "data_good_classification";
+    public static final String DATA_GOOD_CLASSIFICATION_CONFIDENCE = "data_good_classification_confidence";
+
+
+
 
     //Spinner data
     public static final int SPINNER_GOOD_TYPE = 1;

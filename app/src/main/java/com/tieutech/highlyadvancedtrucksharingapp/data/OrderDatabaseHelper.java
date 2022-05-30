@@ -40,7 +40,11 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
                 + Util.ORDER_LENGTH + " TEXT , "
                 + Util.ORDER_HEIGHT + " TEXT , "
                 + Util.ORDER_VEHICLE_TYPE + " TEXT , "
-                + Util.ORDER_GOOD_DESCRIPTION + " TEXT)";
+                + Util.ORDER_GOOD_DESCRIPTION + " TEXT , "
+
+                + Util.ORDER_GOOD_IMAGE + " BLOB , "
+                + Util.ORDER_GOOD_CLASSIFICATION + " TEXT , "
+                + Util.ORDER_GOOD_CLASSIFICATION_CONFIDENCE + " REAL)";
 
         sqLiteDatabase.execSQL(CREATE_USER_TABLE);
     }
@@ -84,6 +88,10 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(Util.ORDER_VEHICLE_TYPE, order.getOrderVehicleType());
         contentValues.put(Util.ORDER_GOOD_DESCRIPTION, order.getGoodDescription());
 
+        contentValues.put(Util.ORDER_GOOD_IMAGE, order.getGoodImage());
+        contentValues.put(Util.ORDER_GOOD_CLASSIFICATION, order.getGoodClassification());
+        contentValues.put(Util.ORDER_GOOD_CLASSIFICATION_CONFIDENCE, order.getGoodClassificationConfidence());
+
         //Insert the all gathered data as a single row entry in to the database
         long rowId = sqLiteDatabase.insert(Util.ORDER_TABLE_NAME, null, contentValues);
 
@@ -122,7 +130,12 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
                         + Util.ORDER_LENGTH + "=? and "
                         + Util.ORDER_HEIGHT + "=? and "
                         + Util.ORDER_VEHICLE_TYPE + "=? and "
-                        + Util.ORDER_GOOD_DESCRIPTION + "=?", //Columns to be identified
+                        + Util.ORDER_GOOD_DESCRIPTION + "=? and "
+
+                        + Util.ORDER_GOOD_IMAGE + "=? and "
+                        + Util.ORDER_GOOD_CLASSIFICATION + "=? and "
+                        + Util.ORDER_GOOD_CLASSIFICATION_CONFIDENCE + "=?", //Columns to be identified
+
                 new String[]{senderImage, senderUsername, receiverUsername, goodDescription}, //Values of the columns to match
                 null, //Grouping of the rows
                 null, //Filtering of the grows
@@ -138,7 +151,6 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
         else {
             return false;
         }
-
     }
 
     //Obtain the Cursor for all data in the database
@@ -164,7 +176,11 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
                 Util.ORDER_LENGTH,
                 Util.ORDER_HEIGHT,
                 Util.ORDER_VEHICLE_TYPE,
-                Util.ORDER_GOOD_DESCRIPTION};
+                Util.ORDER_GOOD_DESCRIPTION,
+
+                Util.ORDER_GOOD_IMAGE,
+                Util.ORDER_GOOD_CLASSIFICATION,
+                Util.ORDER_GOOD_CLASSIFICATION_CONFIDENCE};
 
         //NOTE: get-READABLE-Database
         SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();

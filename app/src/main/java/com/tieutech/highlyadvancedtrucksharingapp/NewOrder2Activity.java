@@ -74,6 +74,10 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
     double destinationLatitude;
     double destinationLongitude;
 
+    byte[] goodImage;
+    String goodClassification;
+    double goodClassificationConfidence;
+
     //Database variables
     OrderDatabaseHelper orderDatabaseHelper = new OrderDatabaseHelper(this);
     UserDatabaseHelper userDatabaseHelper = new UserDatabaseHelper(this);
@@ -104,15 +108,9 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
         heightEditText = (EditText) findViewById(R.id.heightEditText);
 
 
-
-
         classificationTextView = findViewById(R.id.classificationTextView);
         confidenceTextView = findViewById(R.id.confidenceTextView);
         goodImageView = findViewById(R.id.goodImageView);
-
-
-
-
 
 
         //Obtain the sender name (i.e. the user who created the order - also, the current username)
@@ -253,8 +251,20 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
 
         long rowID;
 
-        //If the User HAS an existing account display picture
-        if (senderImageBytesArray != null) {
+        if (senderImageBytesArray == null) {
+            //Obtain the byte array of the default image drawable so that it could be inserted into the Order database
+            Bitmap bitmap = Util.getBitmapFromDrawable(this, R.drawable.order_image_default);
+            senderImageBytesArray = Util.getBytesArrayFromBitmap(bitmap);
+        }
+
+        if (goodImage == null) {
+            //Obtain the byte array of the default image drawable so that it could be inserted into the Order database
+            Bitmap bitmap = Util.getBitmapFromDrawable(this, R.drawable.order_good_image_default);
+            goodImage = Util.getBytesArrayFromBitmap(bitmap);
+        }
+
+//        //If the User HAS an existing account display picture
+//        if (senderImageBytesArray != null) {
 
             //Insert a new entry to the Order database using all the obtained data
             rowID = orderDatabaseHelper.insertOrder(new Order(
@@ -266,51 +276,57 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
                     pickupTime,
                     pickupLocation,
 
-
                     pickupLocationLatitude,
                     pickupLocationLongitude,
                     destination,
                     destinationLatitude,
                     destinationLongitude,
 
-
                     goodTypeSelected,
                     weight,
                     width,
                     length,
                     height,
-                    vehicleTypeSelected));
-        }
-        //If the User DOES NOT have an existing account display picture
-        else {
-            //Obtain the byte array of the default image drawable so that it could be inserted into the Order database
-            Bitmap bitmap = Util.getBitmapFromDrawable(this, R.drawable.order_image_default);
-            byte[] byteImage = Util.getBytesArrayFromBitmap(bitmap);
+                    vehicleTypeSelected,
 
-            //Insert a new entry to the Order database using all the obtained data
-            rowID = orderDatabaseHelper.insertOrder(new Order(
-                    byteImage,
-                    senderName,
-                    receiverName,
-                    goodDescription,
-                    pickupDate,
-                    pickupTime,
-                    pickupLocation,
+                    goodImage,
+                    goodClassification,
+                    goodClassificationConfidence));
+//        }
 
-                    pickupLocationLatitude,
-                    pickupLocationLongitude,
-                    destination,
-                    destinationLatitude,
-                    destinationLongitude,
-
-
-                    goodTypeSelected,
-                    weight,
-                    width,
-                    length,
-                    height,
-                    vehicleTypeSelected));
-        }
+//        //If the User DOES NOT have an existing account display picture
+//        else {
+//            //Obtain the byte array of the default image drawable so that it could be inserted into the Order database
+//            Bitmap bitmap = Util.getBitmapFromDrawable(this, R.drawable.order_image_default);
+//            byte[] byteImage = Util.getBytesArrayFromBitmap(bitmap);
+//
+//            //Insert a new entry to the Order database using all the obtained data
+//            rowID = orderDatabaseHelper.insertOrder(new Order(
+//                    byteImage,
+//                    senderName,
+//                    receiverName,
+//                    goodDescription,
+//                    pickupDate,
+//                    pickupTime,
+//                    pickupLocation,
+//
+//                    pickupLocationLatitude,
+//                    pickupLocationLongitude,
+//                    destination,
+//                    destinationLatitude,
+//                    destinationLongitude,
+//
+//                    goodTypeSelected,
+//                    weight,
+//                    width,
+//                    length,
+//                    height,
+//                    vehicleTypeSelected,
+//
+//                    goodImage,
+//                    goodClassification,
+//                    goodClassificationConfidence));
+//        }
 
         //If the inserting of a new Order entry into the Order database is successful
         if (rowID > 0) {
@@ -344,10 +360,10 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
                         final Uri imageUri = data.getData();
                         final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                         Bitmap image = BitmapFactory.decodeStream(imageStream);
+                        image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false);
 
                         goodImageView.setImageBitmap(image);
-
-                        image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false);
+                        goodImage = Util.getBytesArrayFromBitmap(image);
 
                         classifyImage(image);
 
@@ -411,6 +427,9 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
             }
 
 //            confidence.setText(s);
+
+            goodClassification = classes[maxPos];
+            goodClassificationConfidence = maxConfidence;
 
             confidenceTextView.setText(String.format("%.2f%%", maxConfidence*100));
 

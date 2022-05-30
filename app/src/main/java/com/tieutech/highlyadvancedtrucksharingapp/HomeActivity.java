@@ -58,6 +58,10 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
     String orderVehicleType;
     String goodDescription;
 
+    byte[] goodImage;
+    String goodClassification;
+    double goodClassificationConfidence;
+
     //List variables
     List<Order> allOrdersList = new ArrayList<>(); //List of all orders (includes sample orders and my orders)
     List<Order> myOrdersList = new ArrayList<>(); //List of my orders only
@@ -135,6 +139,10 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
                 orderVehicleType = cursor.getString(17);
                 goodDescription = cursor.getString(18);
 
+                goodImage = cursor.getBlob(19);
+                goodClassification = cursor.getString(20);
+                goodClassificationConfidence = cursor.getDouble(21);
+
                 //Add all the obtained data from the FIRST order in the database to the myOrdersList
                 myOrdersList.add(new Order(
                         senderImageBytesArray,
@@ -156,7 +164,11 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
                         orderWidth,
                         orderLength,
                         orderHeight,
-                        orderVehicleType));
+                        orderVehicleType,
+
+                        goodImage,
+                        goodClassification,
+                        goodClassificationConfidence));
 
                 String str;
                 StringBuilder stringBuilder = new StringBuilder();
@@ -192,6 +204,10 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
                 orderVehicleType = cursor.getString(17);
                 goodDescription = cursor.getString(18);
 
+                goodImage = cursor.getBlob(19);
+                goodClassification = cursor.getString(20);
+                goodClassificationConfidence = cursor.getDouble(21);
+
                 //Add all the obtained data from the FIRST order in the database to the myOrdersList
                 myOrdersList.add(new Order(
                         senderImageBytesArray,
@@ -213,7 +229,11 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
                         orderWidth,
                         orderLength,
                         orderHeight,
-                        orderVehicleType));
+                        orderVehicleType,
+
+                        goodImage,
+                        goodClassification,
+                        goodClassificationConfidence));
             }
         }
         catch (Exception e) {
@@ -295,6 +315,10 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
         orderDetailsIntent.putExtra(Util.DATA_LENGTH, allOrdersList.get(position).getOrderLength());
         orderDetailsIntent.putExtra(Util.DATA_HEIGHT, allOrdersList.get(position).getOrderHeight());
         orderDetailsIntent.putExtra(Util.DATA_VEHICLE_TYPE, allOrdersList.get(position).getOrderVehicleType());
+
+        orderDetailsIntent.putExtra(Util.DATA_GOOD_IMAGE, allOrdersList.get(position).getGoodImage());
+        orderDetailsIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION, allOrdersList.get(position).getGoodClassification());
+        orderDetailsIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, allOrdersList.get(position).getGoodClassificationConfidence());
 
         //Open OrderDetailsActivity
         startActivity(orderDetailsIntent);

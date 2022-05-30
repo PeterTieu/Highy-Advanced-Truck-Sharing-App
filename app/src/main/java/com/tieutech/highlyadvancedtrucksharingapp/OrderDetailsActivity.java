@@ -1,7 +1,9 @@
 package com.tieutech.highlyadvancedtrucksharingapp;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,6 +23,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     TextView orderDetailsPickupDateTextView;
     TextView orderDetailsPickupLocationEditText;
     TextView orderDetailsReceiverNameTextView;
+    TextView orderDetailsDestinationTextView;
     TextView orderDetailsGoodTypeTextView;
     TextView orderDetailsVehicleTypeTextView;
     TextView orderDetailsWeightTextView;
@@ -28,6 +31,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
     TextView orderDetailsWidthTextView;
     TextView orderDetailsLengthTextView;
     Button callDriverButton;
+
+    ImageView orderDetailsGoodImageImageView;
+    TextView goodClassificationInfoTextView;
 
     //Data variables
     byte[] senderImageByteArray;
@@ -50,6 +56,10 @@ public class OrderDetailsActivity extends AppCompatActivity {
     String width;
     String length;
 
+    byte[] goodImage;
+    String goodClassification;
+    double goodClassificationConfidence;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +72,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         orderDetailsPickupDateTextView = (TextView) findViewById(R.id.orderDetailsPickupDateTextView);
         orderDetailsPickupLocationEditText = (TextView) findViewById(R.id.orderDetailsPickupLocationEditText);
         orderDetailsReceiverNameTextView = (TextView) findViewById(R.id.orderDetailsReceiverNameTextView);
+        orderDetailsDestinationTextView = (TextView) findViewById(R.id.orderDetailsDestinationTextView);
         orderDetailsGoodTypeTextView = (TextView) findViewById(R.id.orderDetailsGoodTypeTextView);
         orderDetailsVehicleTypeTextView = (TextView) findViewById(R.id.orderDetailsVehicleTypeTextView);
         orderDetailsWeightTextView = (TextView) findViewById(R.id.orderDetailsWeightTextView);
@@ -69,6 +80,10 @@ public class OrderDetailsActivity extends AppCompatActivity {
         orderDetailsWidthTextView = (TextView) findViewById(R.id.orderDetailsWidthTextView);
         orderDetailsLengthTextView = (TextView) findViewById(R.id.orderDetailsLengthTextView);
         callDriverButton = (Button) findViewById(R.id.getEstimateButton);
+
+        orderDetailsGoodImageImageView = (ImageView) findViewById(R.id.orderDetailsGoodImageImageView);
+        goodClassificationInfoTextView = (TextView) findViewById(R.id.goodClassificationInfoTextView);
+
 
         //Obtain data passed from the HomeActivity or MyOrdersActivity for the Order item that is clicked on
         Bundle extras = getIntent().getExtras();
@@ -92,6 +107,10 @@ public class OrderDetailsActivity extends AppCompatActivity {
             height = extras.getString(Util.DATA_HEIGHT);
             width = extras.getString(Util.DATA_WIDTH);
             length = extras.getString(Util.DATA_LENGTH);
+
+            goodImage = extras.getByteArray(Util.DATA_GOOD_IMAGE);
+            goodClassification = extras.getString(Util.DATA_GOOD_CLASSIFICATION);
+            goodClassificationConfidence = extras.getDouble(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE);
         }
 
         //Display data in the views
@@ -101,12 +120,16 @@ public class OrderDetailsActivity extends AppCompatActivity {
         orderDetailsPickupDateTextView.setText(pickupDate);
         orderDetailsPickupLocationEditText.setText(pickupLocation);
         orderDetailsReceiverNameTextView.setText(receiverName);
+        orderDetailsDestinationTextView.setText(destination);
         orderDetailsGoodTypeTextView.setText(goodType);
         orderDetailsVehicleTypeTextView.setText(vehicleType);
         orderDetailsWeightTextView.setText(weight);
         orderDetailsHeightTextView.setText(height);
         orderDetailsWidthTextView.setText(width);
         orderDetailsLengthTextView.setText(length);
+
+        orderDetailsGoodImageImageView.setImageBitmap(Util.getBitmapFromBytesArray(goodImage));
+        goodClassificationInfoTextView.setText(goodClassification + " (" + String.format("%.2f%%", goodClassificationConfidence*100) + ")");
     }
 
     //Listener for the "Call Driver" Button
@@ -138,6 +161,10 @@ public class OrderDetailsActivity extends AppCompatActivity {
         intent.putExtra(Util.DATA_LENGTH, length);
         intent.putExtra(Util.DATA_HEIGHT, height);
         intent.putExtra(Util.DATA_VEHICLE_TYPE, vehicleType);
+
+        intent.putExtra(Util.DATA_GOOD_IMAGE, goodImage);
+        intent.putExtra(Util.DATA_GOOD_CLASSIFICATION, goodClassification);
+        intent.putExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, goodClassificationConfidence);
 
         startActivity(intent);
     }

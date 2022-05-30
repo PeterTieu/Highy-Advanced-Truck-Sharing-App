@@ -85,6 +85,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String width;
     String length;
 
+    byte[] goodImage;
+    String goodClassification;
+    double goodClassificationConfidence;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +124,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         height = intent.getStringExtra(Util.DATA_HEIGHT);
         width = intent.getStringExtra(Util.DATA_WIDTH);
         length = intent.getStringExtra(Util.DATA_LENGTH);
+
+        goodImage = intent.getByteArrayExtra(Util.DATA_GOOD_IMAGE);
+        goodClassification = intent.getStringExtra(Util.DATA_GOOD_CLASSIFICATION);
+        goodClassificationConfidence = intent.getDoubleExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, 0);
 
         //Configure views
         pickupLocationTextView.setText(pickupLocation);
@@ -356,6 +364,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         checkoutIntent.putExtra(Util.DATA_LENGTH, length);
         checkoutIntent.putExtra(Util.DATA_HEIGHT, height);
         checkoutIntent.putExtra(Util.DATA_VEHICLE_TYPE, vehicleType);
+
+        checkoutIntent.putExtra(Util.DATA_GOOD_IMAGE, goodImage);
+        checkoutIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION, goodClassification);
+        checkoutIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, goodClassificationConfidence);
 
         startActivity(checkoutIntent);
     }

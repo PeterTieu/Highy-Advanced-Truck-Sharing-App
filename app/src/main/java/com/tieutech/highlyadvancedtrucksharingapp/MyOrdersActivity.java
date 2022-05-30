@@ -50,6 +50,10 @@ public class MyOrdersActivity extends AppCompatActivity implements OrderRecycler
     String orderVehicleType;
     String goodDescription;
 
+    byte[] goodImage;
+    String goodClassification;
+    double goodClassificationConfidence;
+
     //List variables
     List<Order> myOrdersArrayList = new ArrayList<>();
     List<Order> dbOrderList = new ArrayList<>();
@@ -97,6 +101,10 @@ public class MyOrdersActivity extends AppCompatActivity implements OrderRecycler
                 orderVehicleType = cursor.getString(17);
                 goodDescription = cursor.getString(18);
 
+                goodImage = cursor.getBlob(19);
+                goodClassification = cursor.getString(20);
+                goodClassificationConfidence = cursor.getDouble(21);
+
                 //Add all the obtained data from the FIRST order in the database to the myOrdersList
                 dbOrderList.add(new Order(
                         senderImageBytesArray,
@@ -118,7 +126,11 @@ public class MyOrdersActivity extends AppCompatActivity implements OrderRecycler
                         orderWidth,
                         orderLength,
                         orderHeight,
-                        orderVehicleType));
+                        orderVehicleType,
+
+                        goodImage,
+                        goodClassification,
+                        goodClassificationConfidence));
             }
 
             //Obtain the rest of the Orders in the DB
@@ -148,8 +160,13 @@ public class MyOrdersActivity extends AppCompatActivity implements OrderRecycler
                 orderVehicleType = cursor.getString(17);
                 goodDescription = cursor.getString(18);
 
+                goodImage = cursor.getBlob(19);
+                goodClassification = cursor.getString(20);
+                goodClassificationConfidence = cursor.getDouble(21);
+
                 //Add all the obtained data from the FIRST order in the database to the myOrdersList
-                dbOrderList.add(new Order(senderImageBytesArray,
+                dbOrderList.add(new Order(
+                        senderImageBytesArray,
                         senderUsername,
                         receiverUsername,
                         goodDescription,
@@ -168,7 +185,11 @@ public class MyOrdersActivity extends AppCompatActivity implements OrderRecycler
                         orderWidth,
                         orderLength,
                         orderHeight,
-                        orderVehicleType));
+                        orderVehicleType,
+
+                        goodImage,
+                        goodClassification,
+                        goodClassificationConfidence));
             }
         }
         catch (Exception e) {
@@ -246,7 +267,11 @@ public class MyOrdersActivity extends AppCompatActivity implements OrderRecycler
         orderDetailsIntent.putExtra(Util.DATA_HEIGHT, myOrdersArrayList.get(position).getOrderHeight());
         orderDetailsIntent.putExtra(Util.DATA_VEHICLE_TYPE, myOrdersArrayList.get(position).getOrderVehicleType());
 
-        Log.i("latitudee", myOrdersArrayList.get(position).getOrderPickupLatitude() + "");
+        orderDetailsIntent.putExtra(Util.DATA_LENGTH, myOrdersArrayList.get(position).getOrderLength());
+        orderDetailsIntent.putExtra(Util.DATA_HEIGHT, myOrdersArrayList.get(position).getOrderHeight());
+        orderDetailsIntent.putExtra(Util.DATA_VEHICLE_TYPE, myOrdersArrayList.get(position).getOrderVehicleType());
+
+        Log.i("latitude", myOrdersArrayList.get(position).getOrderPickupLatitude() + "");
         //Open OrderDetailsActivity
         startActivity(orderDetailsIntent);
     }

@@ -41,6 +41,7 @@ public class CheckoutActivity extends AppCompatActivity {
     TextView orderDetailsPickupDateTextView;
     TextView orderDetailsPickupLocationEditText;
     TextView orderDetailsReceiverNameTextView;
+    TextView orderDetailsDestinationTextView;
     TextView orderDetailsGoodTypeTextView;
     TextView orderDetailsVehicleTypeTextView;
     TextView orderDetailsWeightTextView;
@@ -48,6 +49,9 @@ public class CheckoutActivity extends AppCompatActivity {
     TextView orderDetailsWidthTextView;
     TextView orderDetailsLengthTextView;
     Button callDriverButton;
+
+    ImageView orderDetailsGoodImageImageView;
+    TextView goodClassificationInfoTextView;
 
     //Data variables
     private View googlePayButton;
@@ -65,6 +69,10 @@ public class CheckoutActivity extends AppCompatActivity {
     String height;
     String width;
     String length;
+
+    byte[] goodImage;
+    String goodClassification;
+    double goodClassificationConfidence;
 
     /**
      * Initialize the Google Pay API on creation of the activity
@@ -90,6 +98,7 @@ public class CheckoutActivity extends AppCompatActivity {
         orderDetailsPickupDateTextView = (TextView) findViewById(R.id.orderDetailsPickupDateTextView);
         orderDetailsPickupLocationEditText = (TextView) findViewById(R.id.orderDetailsPickupLocationEditText);
         orderDetailsReceiverNameTextView = (TextView) findViewById(R.id.orderDetailsReceiverNameTextView);
+        orderDetailsDestinationTextView = (TextView) findViewById(R.id.orderDetailsDestinationTextView);
         orderDetailsGoodTypeTextView = (TextView) findViewById(R.id.orderDetailsGoodTypeTextView);
         orderDetailsVehicleTypeTextView = (TextView) findViewById(R.id.orderDetailsVehicleTypeTextView);
         orderDetailsWeightTextView = (TextView) findViewById(R.id.orderDetailsWeightTextView);
@@ -98,6 +107,9 @@ public class CheckoutActivity extends AppCompatActivity {
         orderDetailsLengthTextView = (TextView) findViewById(R.id.orderDetailsLengthTextView);
         callDriverButton = (Button) findViewById(R.id.getEstimateButton);
         googlePayButton = findViewById(R.id.googlePayButton);
+
+        orderDetailsGoodImageImageView = (ImageView) findViewById(R.id.orderDetailsGoodImageImageView);
+        goodClassificationInfoTextView = (TextView) findViewById(R.id.goodClassificationInfoTextView);
 
         //Obtain data passed from OrderDetailsActivity
         Intent intent = getIntent();
@@ -119,6 +131,11 @@ public class CheckoutActivity extends AppCompatActivity {
         width = intent.getStringExtra(Util.DATA_WIDTH);
         length = intent.getStringExtra(Util.DATA_LENGTH);
 
+        goodImage = intent.getByteArrayExtra(Util.DATA_GOOD_IMAGE);
+        goodClassification = intent.getStringExtra(Util.DATA_GOOD_CLASSIFICATION);
+        goodClassificationConfidence = intent.getDoubleExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, 0);
+
+
         //Display data in the views
         callDriverButton.setVisibility(View.INVISIBLE);
         orderDetailsUserImageImageView.setImageBitmap(Util.getBitmapFromBytesArray(senderImageByteArray));
@@ -127,12 +144,16 @@ public class CheckoutActivity extends AppCompatActivity {
         orderDetailsPickupDateTextView.setText(pickupDate);
         orderDetailsPickupLocationEditText.setText(pickupLocation);
         orderDetailsReceiverNameTextView.setText(receiverName);
+        orderDetailsDestinationTextView.setText(destination);
         orderDetailsGoodTypeTextView.setText(goodType);
         orderDetailsVehicleTypeTextView.setText(vehicleType);
         orderDetailsWeightTextView.setText(weight);
         orderDetailsHeightTextView.setText(height);
         orderDetailsWidthTextView.setText(width);
         orderDetailsLengthTextView.setText(length);
+
+        orderDetailsGoodImageImageView.setImageBitmap(Util.getBitmapFromBytesArray(goodImage));
+        goodClassificationInfoTextView.setText(goodClassification + " (" + String.format("%.2f%%", goodClassificationConfidence*100) + ")");
 
         //Set listener for Google Play Button
         googlePayButton.setOnClickListener(this::requestPayment);

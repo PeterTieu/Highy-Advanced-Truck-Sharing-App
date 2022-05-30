@@ -22,6 +22,10 @@ public class Order {
     String orderVehicleType; //Vehicle type
     String goodDescription; //Good description
 
+    byte[] goodImage;
+    String goodClassification;
+    double goodClassificationConfidence;
+
     //Constructor #1
     public Order(byte[] senderImage, String senderUsername, String receiverUsername, String goodDescription) {
         this.senderImage = senderImage;
@@ -78,7 +82,41 @@ public class Order {
         this.orderVehicleType = orderVehicleType;
     }
 
-    //Setters
+    //Constructor #4
+    public Order(byte[] senderImage, String senderUsername, String receiverUsername,
+                 String goodDescription, String orderPickupDate, String orderPickupTime,
+                 String orderPickupLocation, double orderPickupLatitude, double orderPickupLongitude,
+                 String orderDestination, double orderDestinationLatitude, double orderDestinationLongitude,
+                 String goodType, String orderWeight, String orderWidth, String orderLength, String orderHeight, String orderVehicleType,
+                 byte[] goodImage, String goodClassification, double goodClassificationConfidence) {
+
+        this.senderImage = senderImage;
+        this.senderUsername = senderUsername;
+        this.receiverUsername = receiverUsername;
+        this.goodDescription = goodDescription;
+        this.orderPickupDate = orderPickupDate;
+        this.orderPickupTime = orderPickupTime;
+        this.orderPickupLocation = orderPickupLocation;
+
+        this.orderPickupLatitude = orderPickupLatitude;
+        this.orderPickupLongitude = orderPickupLongitude;
+        this.orderDestination = orderDestination;
+        this.orderDestinationLatitude = orderDestinationLatitude;
+        this.orderDestinationLongitude = orderDestinationLongitude;
+
+        this.goodType = goodType;
+        this.orderWeight = orderWeight;
+        this.orderWidth = orderWidth;
+        this.orderLength = orderLength;
+        this.orderHeight = orderHeight;
+        this.orderVehicleType = orderVehicleType;
+
+        this.goodImage = goodImage;
+        this.goodClassification = goodClassification;
+        this.goodClassificationConfidence = goodClassificationConfidence;
+    }
+
+    //Getters
     public byte[] getSenderImage() { return senderImage; }
     public String getSenderUsername() {
         return senderUsername;
@@ -104,7 +142,11 @@ public class Order {
         return goodDescription;
     }
 
-    //Getters
+    public byte[] getGoodImage() { return goodImage; }
+    public String getGoodClassification() { return goodClassification; }
+    public double getGoodClassificationConfidence() { return goodClassificationConfidence; }
+
+    //Setters
     public void setSenderImage(byte[] senderImage) { this.senderImage = senderImage; }
     public void setSenderUsername(String senderUsername) {
         this.senderUsername = senderUsername;
@@ -125,4 +167,8 @@ public class Order {
     public void setOrderHeight(String orderHeight) { this.orderHeight = orderHeight; }
     public void setOrderVehicleType(String orderVehicleType) { this.orderVehicleType = orderVehicleType; }
     public void setGoodDescription(String goodDescription) { this.goodDescription = goodDescription; }
+
+    public void setGoodImage(byte[] goodImage) { this.goodImage = goodImage; }
+    public void setGoodClassification(String goodClassification) { this.goodClassification = goodClassification; }
+    public void setGoodClassificationConfidence(double goodClassificationConfidence) { this.goodClassificationConfidence = goodClassificationConfidence; }
 }
