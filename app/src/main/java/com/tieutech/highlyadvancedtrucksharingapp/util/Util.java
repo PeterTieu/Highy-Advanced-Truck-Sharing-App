@@ -93,6 +93,8 @@ public class Util{
     public static final String DATA_GOOD_CLASSIFICATION = "data_good_classification";
     public static final String DATA_GOOD_CLASSIFICATION_CONFIDENCE = "data_good_classification_confidence";
 
+    public static final String DATA_GOOD_DESCRIPTION = "data_good_description";
+
 
 
 

@@ -20,15 +20,14 @@
         android:id="@+id/getEstimateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
         android:onClick="getEstimateClick"
         android:text="Get Estimate"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.521"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
-        app:layout_constraintVertical_bias="0.304" />
+        app:layout_constraintVertical_bias="0.333" />
 
     <TextView
         android:id="@+id/textView12"
@@ -333,6 +332,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout6"
         android:layout_width="150dp"
         android:layout_height="60dp"
         android:background="@drawable/edittext_frame"
@@ -479,5 +479,17 @@
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/textView29"
         app:layout_constraintTop_toTopOf="@+id/textView29" />
+
+    <Button
+        android:id="@+id/readButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:enabled="false"
+        android:onClick="readClick"
+        android:text="Read"
+        android:textSize="22sp"
+        app:layout_constraintStart_toEndOf="@+id/getEstimateButton"
+        app:layout_constraintTop_toTopOf="@+id/getEstimateButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

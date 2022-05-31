@@ -3,6 +3,7 @@ package com.tieutech.highlyadvancedtrucksharingapp;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.tieutech.highlyadvancedtrucksharingapp.R;
 import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
+
+import java.util.Locale;
 
 //ABOUT: Displays the details of an order that is clicked on in either HomeActivity or MyOrdersActivity
 public class OrderDetailsActivity extends AppCompatActivity {
@@ -34,6 +37,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
     ImageView orderDetailsGoodImageImageView;
     TextView goodClassificationInfoTextView;
+    Button readButton;
 
     //Data variables
     byte[] senderImageByteArray;
@@ -60,6 +64,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
     String goodClassification;
     double goodClassificationConfidence;
 
+    String goodDescription;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +89,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
         orderDetailsGoodImageImageView = (ImageView) findViewById(R.id.orderDetailsGoodImageImageView);
         goodClassificationInfoTextView = (TextView) findViewById(R.id.goodClassificationInfoTextView);
+        readButton = (Button) findViewById(R.id.readButton);
 
 
         //Obtain data passed from the HomeActivity or MyOrdersActivity for the Order item that is clicked on
@@ -111,6 +118,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
             goodImage = extras.getByteArray(Util.DATA_GOOD_IMAGE);
             goodClassification = extras.getString(Util.DATA_GOOD_CLASSIFICATION);
             goodClassificationConfidence = extras.getDouble(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE);
+
+            goodDescription = extras.getString(Util.DATA_GOOD_DESCRIPTION);
         }
 
         //Display data in the views
@@ -130,6 +139,36 @@ public class OrderDetailsActivity extends AppCompatActivity {
 
         orderDetailsGoodImageImageView.setImageBitmap(Util.getBitmapFromBytesArray(goodImage));
         goodClassificationInfoTextView.setText(goodClassification + " (" + String.format("%.2f%%", goodClassificationConfidence*100) + ")");
+
+        Log.i("goodDescription", goodDescription);
+
+
+
+        //Instantiate Text to Speech
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+
+            //Upon the initialisation of the TextToSpeech implementation
+            @Override
+            public void onInit(int status) {
+
+                //If the status of the initialisation of the TextToSpeech implementation is correct
+                if (status == TextToSpeech.SUCCESS) {
+
+                    int result = textToSpeech.setLanguage(Locale.ENGLISH); //Set language to English
+
+                    //If the language is not found or supported
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }
+                    else {
+                        readButton.setEnabled(true); //Enable the Say It Button
+                    }
+                }
+                else {
+                    Log.e("TTS", "Initialization failed");
+                }
+            }
+        });
     }
 
     //Listener for the "Call Driver" Button
@@ -167,5 +206,37 @@ public class OrderDetailsActivity extends AppCompatActivity {
         intent.putExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, goodClassificationConfidence);
 
         startActivity(intent);
+    }
+
+    private TextToSpeech textToSpeech;
+
+    public void readClick(View view) {
+        speak();
+    }
+
+    //Execute the speech
+    private void speak() {
+        String text = goodDescription; //Obtain the speech from the text
+
+//        //Set the pitch to normal
+//        float pitch = (float) pitchSeekBar.getProgress() / 50;
+//
+//        //Set lower limits for the pitch
+//        if (pitch < 0.1) {
+//            pitch = 0.1f;
+//        }
+//
+//        //Set the speed to normal
+//        float speed = (float) speedSeekBar.getProgress() / 50;
+//
+//        //Set the lower limits for the speed
+//        if (speed < 0.1) {
+//            speed = 0.1f;
+//        }
+
+        //Set the pitch and speed
+//        textToSpeech.setPitch(pitch);
+//        textToSpeech.setSpeechRate(speed);
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 }

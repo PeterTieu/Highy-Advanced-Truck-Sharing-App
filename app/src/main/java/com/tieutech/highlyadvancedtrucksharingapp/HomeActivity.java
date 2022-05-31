@@ -279,6 +279,10 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
                 Intent myOrdersActivity = new Intent(HomeActivity.this, MyOrdersActivity.class);
                 startActivity(myOrdersActivity);
                 return true;
+            case R.id.action_logout:
+                Intent mainActivity = new Intent(HomeActivity.this, MainActivity.class);
+                startActivity(mainActivity);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -319,6 +323,8 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
         orderDetailsIntent.putExtra(Util.DATA_GOOD_IMAGE, allOrdersList.get(position).getGoodImage());
         orderDetailsIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION, allOrdersList.get(position).getGoodClassification());
         orderDetailsIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, allOrdersList.get(position).getGoodClassificationConfidence());
+
+        orderDetailsIntent.putExtra(Util.DATA_GOOD_DESCRIPTION, allOrdersList.get(position).getGoodDescription());
 
         //Open OrderDetailsActivity
         startActivity(orderDetailsIntent);

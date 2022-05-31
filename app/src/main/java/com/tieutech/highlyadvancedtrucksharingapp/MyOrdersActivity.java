@@ -234,6 +234,10 @@ public class MyOrdersActivity extends AppCompatActivity implements OrderRecycler
                 Intent myOrdersActivity = new Intent(MyOrdersActivity.this, MyOrdersActivity.class);
                 startActivity(myOrdersActivity);
                 return true;
+            case R.id.action_logout:
+                Intent mainActivity = new Intent(MyOrdersActivity.this, MainActivity.class);
+                startActivity(mainActivity);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -271,6 +275,14 @@ public class MyOrdersActivity extends AppCompatActivity implements OrderRecycler
         orderDetailsIntent.putExtra(Util.DATA_HEIGHT, myOrdersArrayList.get(position).getOrderHeight());
         orderDetailsIntent.putExtra(Util.DATA_VEHICLE_TYPE, myOrdersArrayList.get(position).getOrderVehicleType());
 
+        orderDetailsIntent.putExtra(Util.DATA_GOOD_IMAGE, myOrdersArrayList.get(position).getGoodImage());
+        orderDetailsIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION, myOrdersArrayList.get(position).getGoodClassification());
+        orderDetailsIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, myOrdersArrayList.get(position).getGoodClassificationConfidence());
+
+        orderDetailsIntent.putExtra(Util.DATA_GOOD_DESCRIPTION, myOrdersArrayList.get(position).getGoodDescription());
+
+//        orderDetailsIntent.putExtra(Util.DATA_GOOD_DESCRIPTION, myOrdersArrayList.get(position).getGoodDescription());
+
         Log.i("latitude", myOrdersArrayList.get(position).getOrderPickupLatitude() + "");
         //Open OrderDetailsActivity
         startActivity(orderDetailsIntent);
@@ -287,7 +299,6 @@ public class MyOrdersActivity extends AppCompatActivity implements OrderRecycler
         sendIntent.putExtra(Intent.EXTRA_TEXT, goodDescription);
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
-
     }
 
 

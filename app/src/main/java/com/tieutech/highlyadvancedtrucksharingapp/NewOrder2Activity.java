@@ -417,7 +417,8 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
                 }
             }
 
-            String[] classes = {"Chair", "Table", "Bed", "Fridge"};
+            String[] classes = {"Chair", "Bed", "Table", "Fridge", "Computer", "Watch", "Dish", "Bread", "Pizza", "Chips", "Vegetables", "Rice", "Nuts", "Metal", "Timber", "Coal", "Dirt"};
+
 
             classificationTextView.setText(classes[maxPos]);
 
