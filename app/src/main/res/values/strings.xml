@@ -27,4 +27,8 @@
     <string name="payments_show_name" translatable="false">Successfully received payment data for
         %s!
     </string>
+
+
+    <string name="autofill_fields_using_image"><u>Autofill fields using image</u></string>
+
 </resources>

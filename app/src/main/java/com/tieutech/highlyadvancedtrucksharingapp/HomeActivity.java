@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +22,7 @@ import com.tieutech.highlyadvancedtrucksharingapp.model.Order;
 import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 //ABOUT: The activity that displays all the available trucks
 public class HomeActivity extends AppCompatActivity implements OrderRecyclerViewAdapter.OnOrderListener{
@@ -246,12 +248,35 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
         }
 
         //RecyclerViewAdapter to link the RecyclerView for Orders to the data
-        orderRecyclerViewAdapter = new OrderRecyclerViewAdapter(allOrdersList, this, this, this); //Instantiate the Recyclerview Adapter
+        orderRecyclerViewAdapter = new OrderRecyclerViewAdapter(allOrdersList, this, this, this, this); //Instantiate the Recyclerview Adapter
         orderRecyclerView.setAdapter(orderRecyclerViewAdapter); //Set the Adapter to the RecyclerView
 
         //LinearLayoutManager to set the layout of the RecyclerView (and make it horizontal)
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         orderRecyclerView.setLayoutManager(layoutManager); //Link the LayoutManager to the RecyclerView
+
+        //Instantiate Text to Speech
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+
+            //Upon the initialisation of the TextToSpeech implementation
+            @Override
+            public void onInit(int status) {
+
+                //If the status of the initialisation of the TextToSpeech implementation is correct
+                if (status == TextToSpeech.SUCCESS) {
+
+                    int result = textToSpeech.setLanguage(Locale.ENGLISH); //Set language to English
+
+                    //If the language is not found or supported
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "Language not supported");
+                    }
+                }
+                else {
+                    Log.e("TTS", "Initialization failed");
+                }
+            }
+        });
     }
 
     //Create the options menu
@@ -330,6 +355,20 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
         startActivity(orderDetailsIntent);
     }
 
+    private TextToSpeech textToSpeech;
+
+    //Execute the speech
+    private void speak() {
+        String text = goodDescription; //Obtain the speech from the text
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    //Listener for the selection of a Share icon
+    @Override
+    public void onSpeakClick(int position) {
+        speak();
+    }
+
     //Listener for the selection of a Share icon
     @Override
     public void onShareClick(int position) {
@@ -340,5 +379,17 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
         sendIntent.putExtra(Intent.EXTRA_TEXT, goodDescription);
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        //If the TextToSpeech exists, stop it and shut it down
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+
+        super.onDestroy();
     }
 }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "193643790876",
+    "project_id": "truck-sharing-app-5afa1",
+    "storage_bucket": "truck-sharing-app-5afa1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193643790876:android:93ee52f3cba152eb3315d9",
+        "android_client_info": {
+          "package_name": "com.tieutech.highlyadvancedtrucksharingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "193643790876-rnr8bs5ra7vvd6gjb7a2ae5qhsjd7lln.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4qsXwkA-Q6_dwljsxkoilZrH3dSPsZcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "193643790876-rnr8bs5ra7vvd6gjb7a2ae5qhsjd7lln.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

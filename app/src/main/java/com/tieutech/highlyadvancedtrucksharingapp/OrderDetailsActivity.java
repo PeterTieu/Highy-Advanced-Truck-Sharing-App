@@ -239,4 +239,16 @@ public class OrderDetailsActivity extends AppCompatActivity {
 //        textToSpeech.setSpeechRate(speed);
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
+
+    @Override
+    protected void onDestroy() {
+
+        //If the TextToSpeech exists, stop it and shut it down
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+
+        super.onDestroy();
+    }
 }

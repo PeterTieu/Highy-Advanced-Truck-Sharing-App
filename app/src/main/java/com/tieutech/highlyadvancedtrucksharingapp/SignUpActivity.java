@@ -5,19 +5,31 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.tieutech.highlyadvancedtrucksharingapp.R;
 import com.tieutech.highlyadvancedtrucksharingapp.data.UserDatabaseHelper;
 import com.tieutech.highlyadvancedtrucksharingapp.model.User;
 import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 //ABOUT: Allows the user to sign up/create a new account
 public class SignUpActivity extends AppCompatActivity {
@@ -44,6 +56,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     //Request variable
     final int GALLERY_REQUEST = 100;
+    public static final int AUTOFILL_REQUEST = 200;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -127,5 +140,69 @@ public class SignUpActivity extends AppCompatActivity {
         }else {
             makeToast("You haven't picked an image yet!");
         }
+
+        if (reqCode == AUTOFILL_REQUEST)
+        {
+            FirebaseVisionImage image;
+            try {
+                image = FirebaseVisionImage.fromFilePath(getApplicationContext(), data.getData());
+                FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
+                        .getOnDeviceTextRecognizer();
+                Task<FirebaseVisionText> firebaseVisionTextTask = textRecognizer.processImage(image)
+                        .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                            @Override
+                            public void onSuccess(FirebaseVisionText result) {
+                                for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
+                                    for (FirebaseVisionText.Line line: block.getLines()) {
+                                        int lineCount = line.getElements().size();
+                                        int index = 0;
+                                        while (index < lineCount) {
+                                            FirebaseVisionText.Element element = line.getElements().get(index);
+                                            String text = element.getText().toLowerCase(Locale.ROOT);
+
+                                            if (text.contains("name") || element.getText().contains("Name") || element.getText().contains("NAME")) {
+                                                for (int i = index + 1; i < lineCount - 1; i++) {
+                                                    fullNameEditText.append(line.getElements().get(i).getText() + " ");
+                                                }
+                                                fullNameEditText.append(line.getElements().get(lineCount - 1).getText());
+                                                break;
+                                            }
+                                            else if (text.contains("user") || element.getText().contains("User") || element.getText().contains("USER")) {
+                                                for (int i = index + 1; i < lineCount - 1; i++) {
+                                                    signUpUserNameEditText.append(line.getElements().get(i).getText() + " ");
+                                                }
+                                                signUpUserNameEditText.append(line.getElements().get(lineCount - 1).getText());
+                                                break;
+                                            }
+                                            else if (text.contains("phone") || element.getText().contains("Phone") || element.getText().contains("PHONE") || element.getText().contains("Ph")) {
+                                                phoneNumberEditText.append(line.getElements().get(index+1).getText());
+                                                break;
+                                            }
+                                            else {
+                                                index++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Util.makeToast(getApplicationContext(), "an error has occurred!");
+                                    }
+                                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void autofillFieldsClick(View view) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), AUTOFILL_REQUEST);
     }
 }
