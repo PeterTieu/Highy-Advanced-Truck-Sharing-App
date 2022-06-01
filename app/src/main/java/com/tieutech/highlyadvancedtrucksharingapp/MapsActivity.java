@@ -344,7 +344,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //Listener for the Book Now Button
     public void bookNowClick(View view)
     {
-        Intent checkoutIntent = new Intent(MapsActivity.this, CheckoutActivity.class);
+//        Intent checkoutIntent = new Intent(MapsActivity.this, CheckoutActivity.class);
+        Intent checkoutIntent = new Intent(MapsActivity.this, FingerprintActivity.class);
 
         //Send data to the OrderDetailsActivity
         checkoutIntent.putExtra(Util.DATA_SENDER_IMAGE, senderImageByteArray);

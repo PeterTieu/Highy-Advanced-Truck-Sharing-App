@@ -18,16 +18,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TruckSharingApp">
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.CheckoutActivity"
+            android:name=".FingerprintActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CheckoutActivity"
             android:exported="false"
             android:label="@string/title_activity_checkout"
-            android:theme="@style/Theme.TruckSharingApp" />
-
-        <!-- This element is required to enable Google Pay in your app. -->
+            android:theme="@style/Theme.TruckSharingApp" /> <!-- This element is required to enable Google Pay in your app. -->
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
-
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -44,36 +44,36 @@
             android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.MapsActivity"
+            android:name=".MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.NewOrder1Activity"
+            android:name=".NewOrder1Activity"
             android:exported="false"
             android:label="@string/title_activity_new_order"
             android:theme="@style/Theme.TruckSharingApp.NoActionBar" />
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.NewOrder2Activity"
+            android:name=".NewOrder2Activity"
             android:exported="false"
             android:label="@string/title_activity_new_order"
             android:theme="@style/Theme.TruckSharingApp.NoActionBar" />
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.HomeActivity"
+            android:name=".HomeActivity"
             android:exported="false"
             android:label="@string/title_activity_home"
             android:theme="@style/Theme.TruckSharingApp" />
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.AccountActivity"
+            android:name=".AccountActivity"
             android:exported="false"
             android:label="@string/title_activity_account"
             android:theme="@style/Theme.TruckSharingApp" />
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.MyOrdersActivity"
+            android:name=".MyOrdersActivity"
             android:exported="false"
             android:label="@string/title_activity_my_orders"
             android:theme="@style/Theme.TruckSharingApp" />
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.OrderDetailsActivity"
+            android:name=".OrderDetailsActivity"
             android:exported="false"
             android:label="@string/title_activity_order_details"
             android:theme="@style/Theme.TruckSharingApp" /> <!-- <activity -->
@@ -81,11 +81,11 @@
         <!-- android:exported="false" -->
         <!-- android:label="@string/title_activity_maps" /> -->
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.PlacesActivity"
+            android:name=".PlacesActivity"
             android:exported="false"
             android:label="Location" />
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -94,7 +94,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.tieutech.highlyadvancedtrucksharingapp.SignUpActivity"
+            android:name=".SignUpActivity"
             android:label="@string/sign_up" />
     </application>
 
