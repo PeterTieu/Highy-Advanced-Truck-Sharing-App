@@ -395,8 +395,4 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
             //TODO Handle the exception
         }
     }
-
-    public void makeToast(String message) {
-        Toast.makeText(NewOrder2Activity.this, message, Toast.LENGTH_SHORT).show();
-    }
 }

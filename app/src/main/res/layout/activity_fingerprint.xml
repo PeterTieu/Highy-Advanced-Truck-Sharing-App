@@ -30,11 +30,12 @@
         android:textSize="18sp" />
 
     <Button
-        android:id="@+id/login"
+        android:id="@+id/verifyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="20dp"
         android:background="#fafafa"
+        android:onClick="verifyClick"
         android:text="Verify" />
 
 </LinearLayout>

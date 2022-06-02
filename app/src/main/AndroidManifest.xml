@@ -3,12 +3,11 @@
     package="com.tieutech.highlyadvancedtrucksharingapp">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <meta-data
         android:name="com.google.android.gms.wallet.api.enabled"
         android:value="true" />
-
-    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -76,10 +75,7 @@
             android:name=".OrderDetailsActivity"
             android:exported="false"
             android:label="@string/title_activity_order_details"
-            android:theme="@style/Theme.TruckSharingApp" /> <!-- <activity -->
-        <!-- android:name=".MapsActivity" -->
-        <!-- android:exported="false" -->
-        <!-- android:label="@string/title_activity_maps" /> -->
+            android:theme="@style/Theme.TruckSharingApp" />
         <activity
             android:name=".PlacesActivity"
             android:exported="false"

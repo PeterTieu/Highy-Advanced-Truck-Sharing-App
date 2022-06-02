@@ -18,14 +18,13 @@ import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
 
 import java.util.concurrent.Executor;
 
+//ABOUT: Activity to verify the user's fingerprint prior to proceeding to booking the Order
 public class FingerprintActivity extends AppCompatActivity {
 
     //Data variables
-
     private double destinationLatitude, destinationLongitude;
     private double pickupLocationLatitude, pickupLocationLongitude;
-    private String pickupLocation, destination, duration;
-
+    private String pickupLocation, destination;
     byte[] senderImageByteArray;
     String senderName;
     String pickupTime;
@@ -37,10 +36,13 @@ public class FingerprintActivity extends AppCompatActivity {
     String height;
     String width;
     String length;
-
     byte[] goodImage;
     String goodClassification;
     double goodClassificationConfidence;
+
+    //Other variable
+    BiometricPrompt biometricPrompt;
+    BiometricPrompt.PromptInfo promptInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +51,7 @@ public class FingerprintActivity extends AppCompatActivity {
 
         // Initialising msgtext and loginbutton
         TextView msgtex = findViewById(R.id.msgtext);
-        final Button loginbutton = findViewById(R.id.login);
-
+        final Button verifyButton = findViewById(R.id.verifyButton);
 
         //Obtain data passed from MapsActivity
         Intent intent = getIntent();
@@ -71,57 +72,59 @@ public class FingerprintActivity extends AppCompatActivity {
         height = intent.getStringExtra(Util.DATA_HEIGHT);
         width = intent.getStringExtra(Util.DATA_WIDTH);
         length = intent.getStringExtra(Util.DATA_LENGTH);
-
         goodImage = intent.getByteArrayExtra(Util.DATA_GOOD_IMAGE);
         goodClassification = intent.getStringExtra(Util.DATA_GOOD_CLASSIFICATION);
         goodClassificationConfidence = intent.getDoubleExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, 0);
 
-
-        // creating a variable for our BiometricManager
-        // and lets check if our user can use biometric sensor or not
+        //Create a variable for the BiometricManager
         BiometricManager biometricManager = androidx.biometric.BiometricManager.from(this);
+
+        //Check if the user can use biometric sensor
         switch (biometricManager.canAuthenticate()) {
 
-            // this means we can use biometric sensor
+            //If the biometric sensor can be used
             case BiometricManager.BIOMETRIC_SUCCESS:
                 msgtex.setText("You can use the fingerprint sensor to verify");
                 msgtex.setTextColor(Color.parseColor("#fafafa"));
                 break;
 
-            // this means that the device doesn't have fingerprint sensor
+            //If the device does not have the biometric sensor
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
                 msgtex.setText("This device does not have a fingerprint sensor");
-                loginbutton.setVisibility(View.GONE);
+                verifyButton.setVisibility(View.GONE);
                 break;
 
-            // this means that biometric sensor is not available
+            //If the sensor is not available
             case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
                 msgtex.setText("The biometric sensor is currently unavailable");
-                loginbutton.setVisibility(View.GONE);
+                verifyButton.setVisibility(View.GONE);
                 break;
 
-            // this means that the device doesn't contain your fingerprint
+            //If the device does not contain the fingerprint sensor
             case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
                 msgtex.setText("Your device doesn't have fingerprint saved,please check your security settings");
-                loginbutton.setVisibility(View.GONE);
+                verifyButton.setVisibility(View.GONE);
                 break;
         }
-        // creating a variable for our Executor
+
+        //Create a variable for the Executor
         Executor executor = ContextCompat.getMainExecutor(this);
-        // this will give us result of AUTHENTICATION
-        final BiometricPrompt biometricPrompt = new BiometricPrompt(FingerprintActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+
+        //Obtain a result from the authentication
+        biometricPrompt = new BiometricPrompt(FingerprintActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
             @Override
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
             }
 
-            // THIS METHOD IS CALLED WHEN AUTHENTICATION IS SUCCESS
+            //Listener for a successful authentication
             @Override
             public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                 super.onAuthenticationSucceeded(result);
-                Toast.makeText(getApplicationContext(), "Verification Successful", Toast.LENGTH_SHORT).show();
-                loginbutton.setText("Verification Successful");
 
+                Util.makeToast(getApplicationContext(), "Verification Successful"); //Display toast to indicate a successful authentication
+
+                verifyButton.setText("Verification Successful"); //Display text to indicate a successful authentication
 
                 //Start the CheckoutActivity
                 Intent checkoutIntent = new Intent(FingerprintActivity.this, CheckoutActivity.class);
@@ -144,13 +147,11 @@ public class FingerprintActivity extends AppCompatActivity {
                 checkoutIntent.putExtra(Util.DATA_LENGTH, length);
                 checkoutIntent.putExtra(Util.DATA_HEIGHT, height);
                 checkoutIntent.putExtra(Util.DATA_VEHICLE_TYPE, vehicleType);
-
                 checkoutIntent.putExtra(Util.DATA_GOOD_IMAGE, goodImage);
                 checkoutIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION, goodClassification);
                 checkoutIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, goodClassificationConfidence);
 
-                startActivity(checkoutIntent);
-
+                startActivity(checkoutIntent); //Start the activity
             }
 
             @Override
@@ -158,16 +159,21 @@ public class FingerprintActivity extends AppCompatActivity {
                 super.onAuthenticationFailed();
             }
         });
-        // creating a variable for our promptInfo
-        // BIOMETRIC DIALOG
-        final BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder().setTitle("GFG")
-                .setDescription("Use your fingerprint to verify ").setNegativeButtonText("Cancel").build();
-        loginbutton.setOnClickListener(new View.OnClickListener() {
+        //Variable for the Dialog to prompt the user to undergo fingerprint verification
+        BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder().setTitle("Fingerprint Verification").setDescription("Use your fingerprint to verify ").setNegativeButtonText("Cancel").build();
+
+        //Listener for the
+        verifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 biometricPrompt.authenticate(promptInfo);
-
             }
         });
     }
+
+    //Listener for the Verify Button
+    public void verifyClick(View view) {
+        biometricPrompt.authenticate(promptInfo);
+    }
+
 }

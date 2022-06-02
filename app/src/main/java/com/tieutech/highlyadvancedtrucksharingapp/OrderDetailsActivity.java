@@ -1,7 +1,6 @@
 package com.tieutech.highlyadvancedtrucksharingapp;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -10,10 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.tieutech.highlyadvancedtrucksharingapp.R;
 import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
-
 import java.util.Locale;
 
 //ABOUT: Displays the details of an order that is clicked on in either HomeActivity or MyOrdersActivity
@@ -34,7 +30,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
     TextView orderDetailsWidthTextView;
     TextView orderDetailsLengthTextView;
     Button callDriverButton;
-
     ImageView orderDetailsGoodImageImageView;
     TextView goodClassificationInfoTextView;
     Button readButton;
@@ -44,14 +39,12 @@ public class OrderDetailsActivity extends AppCompatActivity {
     String senderName;
     String pickupTime;
     String pickupDate;
-
     String pickupLocation;
     double pickupLocationLatitude;
     double pickupLocationLongitude;
     String destination;
     double destinationLatitude;
     double destinationLongitude;
-
     String receiverName;
     String goodType;
     String vehicleType;
@@ -59,12 +52,13 @@ public class OrderDetailsActivity extends AppCompatActivity {
     String height;
     String width;
     String length;
-
     byte[] goodImage;
     String goodClassification;
     double goodClassificationConfidence;
-
     String goodDescription;
+
+    //Other variable
+    private TextToSpeech textToSpeech;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +80,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
         orderDetailsWidthTextView = (TextView) findViewById(R.id.orderDetailsWidthTextView);
         orderDetailsLengthTextView = (TextView) findViewById(R.id.orderDetailsLengthTextView);
         callDriverButton = (Button) findViewById(R.id.getEstimateButton);
-
         orderDetailsGoodImageImageView = (ImageView) findViewById(R.id.orderDetailsGoodImageImageView);
         goodClassificationInfoTextView = (TextView) findViewById(R.id.goodClassificationInfoTextView);
         readButton = (Button) findViewById(R.id.readButton);
-
 
         //Obtain data passed from the HomeActivity or MyOrdersActivity for the Order item that is clicked on
         Bundle extras = getIntent().getExtras();
@@ -99,14 +91,12 @@ public class OrderDetailsActivity extends AppCompatActivity {
             senderName = extras.getString(Util.DATA_SENDER_NAME);
             pickupDate = extras.getString(Util.DATA_PICKUP_DATE);
             pickupTime = extras.getString(Util.DATA_PICKUP_TIME);
-
             pickupLocation = extras.getString(Util.DATA_PICKUP_LOCATION);
             pickupLocationLatitude = extras.getDouble(Util.DATA_PICKUP_LOCATION_LATITUDE, 0);
             pickupLocationLongitude = extras.getDouble(Util.DATA_PICKUP_LOCATION_LONGITUDE, 0);
             destination = extras.getString(Util.DATA_DESTINATION);
             destinationLatitude = extras.getDouble(Util.DATA_DESTINATION_LATITUDE, 0);
             destinationLongitude = extras.getDouble(Util.DATA_DESTINATION_LONGITUDE, 0);
-
             receiverName = extras.getString(Util.DATA_RECEIVER_NAME);
             goodType = extras.getString(Util.DATA_GOOD_TYPE);
             vehicleType = extras.getString(Util.DATA_VEHICLE_TYPE);
@@ -114,11 +104,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
             height = extras.getString(Util.DATA_HEIGHT);
             width = extras.getString(Util.DATA_WIDTH);
             length = extras.getString(Util.DATA_LENGTH);
-
             goodImage = extras.getByteArray(Util.DATA_GOOD_IMAGE);
             goodClassification = extras.getString(Util.DATA_GOOD_CLASSIFICATION);
             goodClassificationConfidence = extras.getDouble(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE);
-
             goodDescription = extras.getString(Util.DATA_GOOD_DESCRIPTION);
         }
 
@@ -136,15 +124,10 @@ public class OrderDetailsActivity extends AppCompatActivity {
         orderDetailsHeightTextView.setText(height);
         orderDetailsWidthTextView.setText(width);
         orderDetailsLengthTextView.setText(length);
-
         orderDetailsGoodImageImageView.setImageBitmap(Util.getBitmapFromBytesArray(goodImage));
         goodClassificationInfoTextView.setText(goodClassification + " (" + String.format("%.2f%%", goodClassificationConfidence*100) + ")");
 
-        Log.i("goodDescription", goodDescription);
-
-
-
-        //Instantiate Text to Speech
+        //Instantiate TextToSpeech
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
 
             //Upon the initialisation of the TextToSpeech implementation
@@ -171,14 +154,9 @@ public class OrderDetailsActivity extends AppCompatActivity {
         });
     }
 
-    //Listener for the "Call Driver" Button
-//    public void callDriver(View view) {
-//        Intent myOrdersIntent = new Intent(OrderDetailsActivity.this, MyOrdersActivity.class);
-//        startActivity(myOrdersIntent);
-//    }
-
+    //Listener for the "Get Estimate" Button
     public void getEstimateClick(View view) {
-        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+        Intent intent = new Intent(getApplicationContext(), MapsActivity.class); //Create intent to start the MapsActivity
 
         //Send data to the MapsActivity
         intent.putExtra(Util.DATA_SENDER_IMAGE, senderImageByteArray);
@@ -186,29 +164,24 @@ public class OrderDetailsActivity extends AppCompatActivity {
         intent.putExtra(Util.DATA_RECEIVER_NAME, receiverName);
         intent.putExtra(Util.DATA_PICKUP_DATE, pickupDate);
         intent.putExtra(Util.DATA_PICKUP_TIME, pickupTime);
-
         intent.putExtra(Util.DATA_PICKUP_LOCATION, pickupLocation);
         intent.putExtra(Util.DATA_PICKUP_LOCATION_LATITUDE, pickupLocationLatitude);
         intent.putExtra(Util.DATA_PICKUP_LOCATION_LONGITUDE, pickupLocationLongitude);
         intent.putExtra(Util.DATA_DESTINATION, destination);
         intent.putExtra(Util.DATA_DESTINATION_LATITUDE, destinationLatitude);
         intent.putExtra(Util.DATA_DESTINATION_LONGITUDE, destinationLongitude);
-
         intent.putExtra(Util.DATA_GOOD_TYPE, goodType);
         intent.putExtra(Util.DATA_WEIGHT, weight);
         intent.putExtra(Util.DATA_WIDTH, width);
         intent.putExtra(Util.DATA_LENGTH, length);
         intent.putExtra(Util.DATA_HEIGHT, height);
         intent.putExtra(Util.DATA_VEHICLE_TYPE, vehicleType);
-
         intent.putExtra(Util.DATA_GOOD_IMAGE, goodImage);
         intent.putExtra(Util.DATA_GOOD_CLASSIFICATION, goodClassification);
         intent.putExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, goodClassificationConfidence);
 
-        startActivity(intent);
+        startActivity(intent); //Start the activity
     }
-
-    private TextToSpeech textToSpeech;
 
     public void readClick(View view) {
         speak();
@@ -217,26 +190,6 @@ public class OrderDetailsActivity extends AppCompatActivity {
     //Execute the speech
     private void speak() {
         String text = goodDescription; //Obtain the speech from the text
-
-//        //Set the pitch to normal
-//        float pitch = (float) pitchSeekBar.getProgress() / 50;
-//
-//        //Set lower limits for the pitch
-//        if (pitch < 0.1) {
-//            pitch = 0.1f;
-//        }
-//
-//        //Set the speed to normal
-//        float speed = (float) speedSeekBar.getProgress() / 50;
-//
-//        //Set the lower limits for the speed
-//        if (speed < 0.1) {
-//            speed = 0.1f;
-//        }
-
-        //Set the pitch and speed
-//        textToSpeech.setPitch(pitch);
-//        textToSpeech.setSpeechRate(speed);
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 

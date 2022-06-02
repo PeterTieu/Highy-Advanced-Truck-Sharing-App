@@ -105,11 +105,6 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    //Make toast
-    public void makeToast(String message) {
-        Toast.makeText(SignUpActivity.this, message, Toast.LENGTH_SHORT).show();
-    }
-
     //Listener for the ImageView to add a display picture
     public void addDisplayPicture(View view) {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
@@ -117,92 +112,123 @@ public class SignUpActivity extends AppCompatActivity {
         startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
     }
 
-    //Check for results returned from the Gallery application
+    //Check for results returned from the image selection application
     @Override
     protected void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
 
+        //If the RESULT_OK result code is received from the image selection application
         if (resultCode == RESULT_OK) {
+
+            //Switch through the different request codes
             switch (reqCode) {
+
+                //Request code received for the image selected
                 case GALLERY_REQUEST:
                     try {
-                        final Uri imageUri = data.getData();
-                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                        userImageBitmap = BitmapFactory.decodeStream(imageStream);
-                        userDisplayPictureImageView.setImageBitmap(userImageBitmap);
+                        final Uri imageUri = data.getData(); //Get the Uri of the selected image
+                        final InputStream imageStream = getContentResolver().openInputStream(imageUri); //Get the InputStream from the Uri of the selected image
+                        userImageBitmap = BitmapFactory.decodeStream(imageStream); //Obtain the Bitmap of the InputStream of the selected image
 
-                        userImageBytes = Util.getBytesArrayFromBitmap(userImageBitmap);
-                    } catch (FileNotFoundException e) {
+                        userDisplayPictureImageView.setImageBitmap(userImageBitmap); //Set the ImageView of the user to the obtained bitmap
+                        userImageBytes = Util.getBytesArrayFromBitmap(userImageBitmap); //Obtain the bytes array of the selected image
+                    }
+                    //Catch any FileNotFoundException (i.e. if the image is not found)
+                    catch (FileNotFoundException e) {
                         e.printStackTrace();
-                        makeToast("Something went wrong!");
+                        Util.makeToast(this, "Something went wrong!");
                     }
             }
-        }else {
-            makeToast("You haven't picked an image yet!");
+        }
+        else {
+            Util.makeToast(this, "You haven't picked an image yet!");
         }
 
+        //Request code received for the auto-filling of the fields
         if (reqCode == AUTOFILL_REQUEST)
         {
-            FirebaseVisionImage image;
-            try {
-                image = FirebaseVisionImage.fromFilePath(getApplicationContext(), data.getData());
-                FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
-                        .getOnDeviceTextRecognizer();
-                Task<FirebaseVisionText> firebaseVisionTextTask = textRecognizer.processImage(image)
-                        .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-                            @Override
-                            public void onSuccess(FirebaseVisionText result) {
-                                for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
-                                    for (FirebaseVisionText.Line line: block.getLines()) {
-                                        int lineCount = line.getElements().size();
-                                        int index = 0;
-                                        while (index < lineCount) {
-                                            FirebaseVisionText.Element element = line.getElements().get(index);
-                                            String text = element.getText().toLowerCase(Locale.ROOT);
+            FirebaseVisionImage image; //Create FirebaseVisionImage
 
-                                            if (text.contains("name") || element.getText().contains("Name") || element.getText().contains("NAME")) {
-                                                for (int i = index + 1; i < lineCount - 1; i++) {
-                                                    fullNameEditText.append(line.getElements().get(i).getText() + " ");
-                                                }
-                                                fullNameEditText.append(line.getElements().get(lineCount - 1).getText());
-                                                break;
-                                            }
-                                            else if (text.contains("user") || element.getText().contains("User") || element.getText().contains("USER")) {
-                                                for (int i = index + 1; i < lineCount - 1; i++) {
-                                                    signUpUserNameEditText.append(line.getElements().get(i).getText() + " ");
-                                                }
-                                                signUpUserNameEditText.append(line.getElements().get(lineCount - 1).getText());
-                                                break;
-                                            }
-                                            else if (text.contains("phone") || element.getText().contains("Phone") || element.getText().contains("PHONE") || element.getText().contains("Ph")) {
-                                                phoneNumberEditText.append(line.getElements().get(index+1).getText());
-                                                break;
-                                            }
-                                            else {
-                                                index++;
-                                            }
+            try {
+                image = FirebaseVisionImage.fromFilePath(getApplicationContext(), data.getData()); //Obtain the image
+
+                FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance().getOnDeviceTextRecognizer(); //Create the FirebaseVisionTextRecognizer object
+
+                //Start a task to process text recognition from the selected image
+                Task<FirebaseVisionText> firebaseVisionTextTask = textRecognizer.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+
+                    //Listener for the success of the task
+                    @Override
+                    public void onSuccess(FirebaseVisionText result) {
+
+                        //Traverse all text blocks (i.e. blocks of texts in the selected image)
+                        for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
+
+                            //Traverse all the lines within a text block
+                            for (FirebaseVisionText.Line line: block.getLines()) {
+
+                                int lineCount = line.getElements().size(); //Count of the line
+                                int index = 0; //Index of the line
+
+                                //For as long as the index of the line is lower than the line count
+                                while (index < lineCount) {
+                                    FirebaseVisionText.Element element = line.getElements().get(index); //Get the elements in the line
+                                    String text = element.getText().toLowerCase(Locale.ROOT); //Obtain lowercase characters of the entire line
+
+                                    //If the line is related the name of the user
+                                    if (text.contains("name") || element.getText().contains("Name") || element.getText().contains("NAME")) {
+                                        //Traverse all the lines
+                                        for (int i = index + 1; i < lineCount - 1; i++) {
+                                            fullNameEditText.append(line.getElements().get(i).getText() + " "); //Get the elements of the line and add it to the fullNameEditText
                                         }
+                                        fullNameEditText.append(line.getElements().get(lineCount - 1).getText());
+                                        break;
+                                    }
+
+                                    //If the line is related the username of the user
+                                    else if (text.contains("user") || element.getText().contains("User") || element.getText().contains("USER")) {
+                                        //Traverse all the lines
+                                        for (int i = index + 1; i < lineCount - 1; i++) {
+                                            signUpUserNameEditText.append(line.getElements().get(i).getText() + " "); //Get the elements of the line and add it to the signUpUserNameEditText
+                                        }
+                                        signUpUserNameEditText.append(line.getElements().get(lineCount - 1).getText());
+                                        break;
+                                    }
+
+                                    //If the line is related to the phone number of the user
+                                    else if (text.contains("phone") || element.getText().contains("Phone") || element.getText().contains("PHONE") || element.getText().contains("Ph")) {
+                                        phoneNumberEditText.append(line.getElements().get(index+1).getText()); //Get the elements of the line and add it to the phoneNumberEditText
+                                        break;
+                                    }
+                                    else {
+                                        index++;
                                     }
                                 }
                             }
-                        })
+                        }
+                    }
+                })
+                        //Listener for the failure of the text recognition autocomplete
                         .addOnFailureListener(
-                                new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Util.makeToast(getApplicationContext(), "an error has occurred!");
-                                    }
-                                });
-            } catch (IOException e) {
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Util.makeToast(getApplicationContext(), "an error has occurred!");
+                            }
+                        });
+            }
+            //Catch for any IOException
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    //Listener for the "Autofill fields using image" text
     public void autofillFieldsClick(View view) {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Image"), AUTOFILL_REQUEST);
+        Intent intent = new Intent(); //Create a new intent
+        intent.setType("image/*"); //Set the type of the intent to pick images
+        intent.setAction(Intent.ACTION_GET_CONTENT); //Set action to get content
+        startActivityForResult(Intent.createChooser(intent, "Select Image"), AUTOFILL_REQUEST); //Start the activity and send the AUTOFILL_REQUEST request code
     }
 }
