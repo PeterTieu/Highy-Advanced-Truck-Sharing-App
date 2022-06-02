@@ -14,9 +14,7 @@ public class Util{
     //API Key
     public static final String API_KEY = "AIzaSyCz7_53ntdf1uUm6D74So04Bm4ICMsp3Aw";
 
-    public static final int PICK_LOCATION_REQUEST = 200;
-    public static final int PICK_DESTINATION_REQUEST = 300;
-
+    //Map Autocomplete
     public static final String AUTOCOMPLETE_PICKUP_LOCATION = "autocomplete_pickup_location";
     public static final String AUTOCOMPLETE_PICKUP_LOCATION_LATITUDE = "autocomplete_pickup_location_latitude";
     public static final String AUTOCOMPLETE_PICKUP_LOCATION_LONGITUDE = "autocomplete_pickup_location_longitude";
@@ -24,6 +22,9 @@ public class Util{
     public static final String AUTOCOMPLETE_DESTINATION_LATITUDE = "autocomplete_destination_latitude";
     public static final String AUTOCOMPLETE_DESTINATION_LONGITUDE = "autocomplete_destination_longitude";
 
+    //Map
+    public static final int PICK_LOCATION_REQUEST = 200;
+    public static final int PICK_DESTINATION_REQUEST = 300;
 
     //Shared Preferences
     public static final String SHARED_PREF_DATA = "shared_pref_data";
@@ -65,7 +66,6 @@ public class Util{
     public static final String ORDER_HEIGHT = "order_height";
     public static final String ORDER_VEHICLE_TYPE = "order_vehicle_type";
     public static final String ORDER_GOOD_DESCRIPTION = "order_good_description";
-
     public static final String ORDER_GOOD_IMAGE = "order_good_image";
     public static final String ORDER_GOOD_CLASSIFICATION = "order_good_classification";
     public static final String ORDER_GOOD_CLASSIFICATION_CONFIDENCE = "order_good_classification_confidence";
@@ -88,15 +88,10 @@ public class Util{
     public static final String DATA_LENGTH = "data_length";
     public static final String DATA_HEIGHT = "data_weight";
     public static final String DATA_VEHICLE_TYPE = "data_vehicle_type";
-
     public static final String DATA_GOOD_IMAGE = "data_good_image";
     public static final String DATA_GOOD_CLASSIFICATION = "data_good_classification";
     public static final String DATA_GOOD_CLASSIFICATION_CONFIDENCE = "data_good_classification_confidence";
-
     public static final String DATA_GOOD_DESCRIPTION = "data_good_description";
-
-
-
 
     //Spinner data
     public static final int SPINNER_GOOD_TYPE = 1;

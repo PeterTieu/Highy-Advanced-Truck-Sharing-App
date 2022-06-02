@@ -2,22 +2,19 @@ package com.tieutech.highlyadvancedtrucksharingapp.viewmodel;
 
 import android.app.Application;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.wallet.IsReadyToPayRequest;
 import com.google.android.gms.wallet.PaymentData;
 import com.google.android.gms.wallet.PaymentDataRequest;
 import com.google.android.gms.wallet.PaymentsClient;
-
 import org.json.JSONObject;
-
 import com.tieutech.highlyadvancedtrucksharingapp.util.PaymentsUtil;
 
+//ABOUT: ViewModel to display the Google Payment Checkout
 public class CheckoutViewModel extends AndroidViewModel {
 
     // A client for interacting with the Google Pay API.
@@ -27,6 +24,7 @@ public class CheckoutViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> _canUseGooglePay = new MutableLiveData<>();
     public final LiveData<Boolean> canUseGooglePay = _canUseGooglePay;
 
+    //
     public CheckoutViewModel(@NonNull Application application) {
         super(application);
         paymentsClient = PaymentsUtil.createPaymentsClient(application);
@@ -73,8 +71,8 @@ public class CheckoutViewModel extends AndroidViewModel {
             return null;
         }
 
-        PaymentDataRequest request =
-                PaymentDataRequest.fromJson(paymentDataRequestJson.toString());
+        //Request for the payment
+        PaymentDataRequest request = PaymentDataRequest.fromJson(paymentDataRequestJson.toString());
         return paymentsClient.loadPaymentData(request);
     }
 }

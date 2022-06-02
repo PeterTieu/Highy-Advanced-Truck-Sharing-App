@@ -9,6 +9,9 @@ import androidx.annotation.Nullable;
 import com.tieutech.highlyadvancedtrucksharingapp.model.Order;
 import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //ABOUT: Database class for Orders
 public class OrderDatabaseHelper extends SQLiteOpenHelper {
 
@@ -41,7 +44,6 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
                 + Util.ORDER_HEIGHT + " TEXT , "
                 + Util.ORDER_VEHICLE_TYPE + " TEXT , "
                 + Util.ORDER_GOOD_DESCRIPTION + " TEXT , "
-
                 + Util.ORDER_GOOD_IMAGE + " BLOB , "
                 + Util.ORDER_GOOD_CLASSIFICATION + " TEXT , "
                 + Util.ORDER_GOOD_CLASSIFICATION_CONFIDENCE + " REAL)";
@@ -87,7 +89,6 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(Util.ORDER_HEIGHT, order.getOrderHeight());
         contentValues.put(Util.ORDER_VEHICLE_TYPE, order.getOrderVehicleType());
         contentValues.put(Util.ORDER_GOOD_DESCRIPTION, order.getGoodDescription());
-
         contentValues.put(Util.ORDER_GOOD_IMAGE, order.getGoodImage());
         contentValues.put(Util.ORDER_GOOD_CLASSIFICATION, order.getGoodClassification());
         contentValues.put(Util.ORDER_GOOD_CLASSIFICATION_CONFIDENCE, order.getGoodClassificationConfidence());
@@ -101,7 +102,6 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
         //Return the row ID if insert was successful, and -1 if it failed
         return rowId;
     }
-
 
     // Called by listener of loginButton in MainActivity
     // Checks to see if the user exists in the SQLiteDatabase - and returns a boolean
@@ -131,7 +131,6 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
                         + Util.ORDER_HEIGHT + "=? and "
                         + Util.ORDER_VEHICLE_TYPE + "=? and "
                         + Util.ORDER_GOOD_DESCRIPTION + "=? and "
-
                         + Util.ORDER_GOOD_IMAGE + "=? and "
                         + Util.ORDER_GOOD_CLASSIFICATION + "=? and "
                         + Util.ORDER_GOOD_CLASSIFICATION_CONFIDENCE + "=?", //Columns to be identified
@@ -199,5 +198,52 @@ public class OrderDatabaseHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
         }
         return cursor;
+    }
+
+    //Fetch all fo the Orders
+    public List<Order> fetchAllOrders() {
+
+        List<Order> orderList = new ArrayList<>(); //Create list of Orders
+
+        SQLiteDatabase db = this.getReadableDatabase(); //Get database
+
+        //Create a cursor to point to the database
+        String selectAll = " SELECT * FROM " + Util.ORDER_TABLE_NAME;
+        Cursor cursor = db.rawQuery(selectAll, null);
+
+        //If there is at least one entry in the database
+        if (cursor.moveToFirst()) {
+            //Create an Order object from the selected row
+            do {
+                Order order = new Order(); //Instantiate an Order object
+
+                //Set values to the Order object
+                order.setOrderId(cursor.getInt(0));
+                order.setSenderImage(cursor.getBlob(1));
+                order.setSenderUsername(cursor.getString(2));
+                order.setReceiverUsername(cursor.getString(3));
+                order.setOrderPickupDate(cursor.getString(4));
+                order.setOrderPickupTime(cursor.getString(5));
+                order.setOrderPickupLocation(cursor.getString(6));
+                order.setOrderPickupLatitude(cursor.getDouble(7));
+                order.setOrderPickupLongitude(cursor.getDouble(8));
+                order.setOrderDestination(cursor.getString(9));
+                order.setOrderDestinationLatitude(cursor.getDouble(10));
+                order.setOrderDestinationLongitude(cursor.getDouble(11));
+                order.setGoodType(cursor.getString(12));
+                order.setOrderWeight(cursor.getString(13));
+                order.setOrderWidth(cursor.getString(14));
+                order.setOrderLength(cursor.getString(15));
+                order.setOrderHeight(cursor.getString(16));
+                order.setOrderVehicleType(cursor.getString(17));
+                order.setGoodDescription(cursor.getString(18));
+                order.setGoodImage(cursor.getBlob(19));
+                order.setGoodClassification(cursor.getString(20));
+                order.setGoodClassificationConfidence(cursor.getDouble(21));
+
+                orderList.add(order); //Add the Order object to the list of Orders
+            } while(cursor.moveToNext()); //Move the cursor to the next entry in the table if it exists
+        }
+        return orderList; //Return the list of Order objects
     }
 }

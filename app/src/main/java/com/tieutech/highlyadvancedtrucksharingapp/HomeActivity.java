@@ -1,7 +1,6 @@
 package com.tieutech.highlyadvancedtrucksharingapp;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -14,8 +13,6 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.tieutech.highlyadvancedtrucksharingapp.R;
 import com.tieutech.highlyadvancedtrucksharingapp.adapter.OrderRecyclerViewAdapter;
 import com.tieutech.highlyadvancedtrucksharingapp.data.OrderDatabaseHelper;
 import com.tieutech.highlyadvancedtrucksharingapp.model.Order;
@@ -37,36 +34,12 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
     //Database variable
     OrderDatabaseHelper orderDatabaseHelper = new OrderDatabaseHelper(this);
 
-    //Data variables
-    int orderID;
-    byte[] senderImageBytesArray;
-    String senderUsername;
-    String receiverUsername;
-    String pickupDate;
-    String pickupTime;
-    String pickupLocation;
-
-    double pickupLocationLatitude;
-    double pickupLocationLongitude;
-    String destination;
-    double destinationLatitude;
-    double destinationLongitude;
-
-    String goodType;
-    String orderWeight;
-    String orderWidth;
-    String orderLength;
-    String orderHeight;
-    String orderVehicleType;
-    String goodDescription;
-
-    byte[] goodImage;
-    String goodClassification;
-    double goodClassificationConfidence;
-
     //List variables
     List<Order> allOrdersList = new ArrayList<>(); //List of all orders (includes sample orders and my orders)
     List<Order> myOrdersList = new ArrayList<>(); //List of my orders only
+
+    //Text-to-speech variable
+    private TextToSpeech textToSpeech;
 
     //======> SAMPLE ORDERS (data) <======
     //Image resources
@@ -110,136 +83,12 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
             allOrdersList.add(order);
         }
 
-        //Obtain data from the OrderDataHelper database (database of my orders) and add them to myOrdersList
-        try {
-            Cursor cursor = orderDatabaseHelper.fetchOrderList(); //Obtain the cursor for the database
+        //Fetch the list of all Orders in the database of Orders
+        List<Order> orderList = orderDatabaseHelper.fetchAllOrders();
 
-            //Cursor to the FIRST entry in the Order database
-            if (cursor != null) {
-                cursor.moveToFirst();
-
-                //Obtain data from the first row of the database
-                orderID = cursor.getInt(0);
-                senderImageBytesArray = cursor.getBlob(1);
-                senderUsername = cursor.getString(2);
-                receiverUsername = cursor.getString(3);
-                pickupDate = cursor.getString(4);
-                pickupTime = cursor.getString(5);
-                pickupLocation = cursor.getString(6);
-
-                pickupLocationLatitude = cursor.getDouble(7);
-                pickupLocationLongitude = cursor.getDouble(8);
-                destination = cursor.getString(9);
-                destinationLatitude = cursor.getDouble(10);
-                destinationLongitude = cursor.getDouble(11);
-
-                goodType = cursor.getString(12);
-                orderWeight = cursor.getString(13);
-                orderWidth = cursor.getString(14);
-                orderLength = cursor.getString(15);
-                orderHeight = cursor.getString(16);
-                orderVehicleType = cursor.getString(17);
-                goodDescription = cursor.getString(18);
-
-                goodImage = cursor.getBlob(19);
-                goodClassification = cursor.getString(20);
-                goodClassificationConfidence = cursor.getDouble(21);
-
-                //Add all the obtained data from the FIRST order in the database to the myOrdersList
-                myOrdersList.add(new Order(
-                        senderImageBytesArray,
-                        senderUsername,
-                        receiverUsername,
-                        goodDescription,
-                        pickupDate,
-                        pickupTime,
-                        pickupLocation,
-
-                        pickupLocationLatitude,
-                        pickupLocationLongitude,
-                        destination,
-                        destinationLatitude,
-                        destinationLongitude,
-
-                        goodType,
-                        orderWeight,
-                        orderWidth,
-                        orderLength,
-                        orderHeight,
-                        orderVehicleType,
-
-                        goodImage,
-                        goodClassification,
-                        goodClassificationConfidence));
-
-                String str;
-                StringBuilder stringBuilder = new StringBuilder();
-                for (int i=0; i<=13; i++) {
-                    stringBuilder.append("cursor.getString(" + i + "),");
-                }
-
-            }
-
-            //Cursor to the rest of the entries int he Order database
-            while (cursor.moveToNext()) {
-
-                //Obtain data from the first row of the database
-                orderID = cursor.getInt(0);
-                senderImageBytesArray = cursor.getBlob(1);
-                senderUsername = cursor.getString(2);
-                receiverUsername = cursor.getString(3);
-                pickupDate = cursor.getString(4);
-                pickupTime = cursor.getString(5);
-                pickupLocation = cursor.getString(6);
-
-                pickupLocationLatitude = cursor.getDouble(7);
-                pickupLocationLongitude = cursor.getDouble(8);
-                destination = cursor.getString(9);
-                destinationLatitude = cursor.getDouble(10);
-                destinationLongitude = cursor.getDouble(11);
-
-                goodType = cursor.getString(12);
-                orderWeight = cursor.getString(13);
-                orderWidth = cursor.getString(14);
-                orderLength = cursor.getString(15);
-                orderHeight = cursor.getString(16);
-                orderVehicleType = cursor.getString(17);
-                goodDescription = cursor.getString(18);
-
-                goodImage = cursor.getBlob(19);
-                goodClassification = cursor.getString(20);
-                goodClassificationConfidence = cursor.getDouble(21);
-
-                //Add all the obtained data from the FIRST order in the database to the myOrdersList
-                myOrdersList.add(new Order(
-                        senderImageBytesArray,
-                        senderUsername,
-                        receiverUsername,
-                        goodDescription,
-                        pickupDate,
-                        pickupTime,
-                        pickupLocation,
-
-                        pickupLocationLatitude,
-                        pickupLocationLongitude,
-                        destination,
-                        destinationLatitude,
-                        destinationLongitude,
-
-                        goodType,
-                        orderWeight,
-                        orderWidth,
-                        orderLength,
-                        orderHeight,
-                        orderVehicleType,
-
-                        goodImage,
-                        goodClassification,
-                        goodClassificationConfidence));
-            }
-        }
-        catch (Exception e) {
-            Log.i("Error", "An error has occurred");
+        //Sift through all Order objects in the list of Orders
+        for (Order order : orderList) {
+            myOrdersList.add(order); //Add all the Order objects to the myOrdersList
         }
 
         //If myOrdersList is not empty - i.e. there exists some Orders added by the user
@@ -344,29 +193,20 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
         orderDetailsIntent.putExtra(Util.DATA_LENGTH, allOrdersList.get(position).getOrderLength());
         orderDetailsIntent.putExtra(Util.DATA_HEIGHT, allOrdersList.get(position).getOrderHeight());
         orderDetailsIntent.putExtra(Util.DATA_VEHICLE_TYPE, allOrdersList.get(position).getOrderVehicleType());
-
         orderDetailsIntent.putExtra(Util.DATA_GOOD_IMAGE, allOrdersList.get(position).getGoodImage());
         orderDetailsIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION, allOrdersList.get(position).getGoodClassification());
         orderDetailsIntent.putExtra(Util.DATA_GOOD_CLASSIFICATION_CONFIDENCE, allOrdersList.get(position).getGoodClassificationConfidence());
-
         orderDetailsIntent.putExtra(Util.DATA_GOOD_DESCRIPTION, allOrdersList.get(position).getGoodDescription());
 
         //Open OrderDetailsActivity
         startActivity(orderDetailsIntent);
     }
 
-    private TextToSpeech textToSpeech;
-
-    //Execute the speech
-    private void speak() {
-        String text = goodDescription; //Obtain the speech from the text
-        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-    }
-
     //Listener for the selection of a Share icon
     @Override
     public void onSpeakClick(int position) {
-        speak();
+        String text = allOrdersList.get(position).getGoodDescription(); //Obtain the speech from the text
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
     //Listener for the selection of a Share icon
@@ -376,7 +216,7 @@ public class HomeActivity extends AppCompatActivity implements OrderRecyclerView
         //Start the intent to share details of the associated Order
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, goodDescription);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, allOrdersList.get(position).getGoodDescription());
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
     }

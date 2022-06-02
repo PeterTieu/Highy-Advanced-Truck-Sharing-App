@@ -6,33 +6,26 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.ColorSpace;
 import android.net.Uri;
 import android.os.Bundle;
-import android.renderscript.Element;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.tieutech.highlyadvancedtrucksharingapp.data.OrderDatabaseHelper;
 import com.tieutech.highlyadvancedtrucksharingapp.data.UserDatabaseHelper;
 import com.tieutech.highlyadvancedtrucksharingapp.ml.Model;
 import com.tieutech.highlyadvancedtrucksharingapp.model.Order;
 import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
-
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,26 +66,22 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
     String destination;
     double destinationLatitude;
     double destinationLongitude;
-
     byte[] goodImage;
     String goodClassification;
     double goodClassificationConfidence;
+    TextView classificationTextView;
+    TextView confidenceTextView;
+    ImageView goodImageView;
 
     //Database variables
     OrderDatabaseHelper orderDatabaseHelper = new OrderDatabaseHelper(this);
     UserDatabaseHelper userDatabaseHelper = new UserDatabaseHelper(this);
 
-
-    TextView classificationTextView;
-    TextView confidenceTextView;
-    ImageView goodImageView;
-    int imageSize = 224;
-
     //Request variable
     final int GALLERY_REQUEST = 100;
 
-
-
+    //Other variables
+    int imageSize = 224;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,12 +95,9 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
         widthEditText = (EditText) findViewById(R.id.widthEditText);
         lengthEditText = (EditText) findViewById(R.id.lengthEditText);
         heightEditText = (EditText) findViewById(R.id.heightEditText);
-
-
         classificationTextView = findViewById(R.id.classificationTextView);
         confidenceTextView = findViewById(R.id.confidenceTextView);
         goodImageView = findViewById(R.id.goodImageView);
-
 
         //Obtain the sender name (i.e. the user who created the order - also, the current username)
         SharedPreferences prefs = getSharedPreferences(Util.SHARED_PREF_DATA, MODE_PRIVATE); //Created a SharedPreference based on the key specified by SHARED_PREF_DATA
@@ -245,7 +231,6 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
                 + " on " + pickupDate + " at " + pickupTime
                 + " by " + vehicleTypeSelected + " mode of transport.";
 
-
         //==== CODE BELOW: ========================================================================
         // Takes all obtained data for the Order and inserts them as a new entry in the Order database
 
@@ -263,134 +248,107 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
             goodImage = Util.getBytesArrayFromBitmap(bitmap);
         }
 
-//        //If the User HAS an existing account display picture
-//        if (senderImageBytesArray != null) {
-
-            //Insert a new entry to the Order database using all the obtained data
-            rowID = orderDatabaseHelper.insertOrder(new Order(
-                    senderImageBytesArray,
-                    senderName,
-                    receiverName,
-                    goodDescription,
-                    pickupDate,
-                    pickupTime,
-                    pickupLocation,
-
-                    pickupLocationLatitude,
-                    pickupLocationLongitude,
-                    destination,
-                    destinationLatitude,
-                    destinationLongitude,
-
-                    goodTypeSelected,
-                    weight,
-                    width,
-                    length,
-                    height,
-                    vehicleTypeSelected,
-
-                    goodImage,
-                    goodClassification,
-                    goodClassificationConfidence));
-//        }
-
-//        //If the User DOES NOT have an existing account display picture
-//        else {
-//            //Obtain the byte array of the default image drawable so that it could be inserted into the Order database
-//            Bitmap bitmap = Util.getBitmapFromDrawable(this, R.drawable.order_image_default);
-//            byte[] byteImage = Util.getBytesArrayFromBitmap(bitmap);
-//
-//            //Insert a new entry to the Order database using all the obtained data
-//            rowID = orderDatabaseHelper.insertOrder(new Order(
-//                    byteImage,
-//                    senderName,
-//                    receiverName,
-//                    goodDescription,
-//                    pickupDate,
-//                    pickupTime,
-//                    pickupLocation,
-//
-//                    pickupLocationLatitude,
-//                    pickupLocationLongitude,
-//                    destination,
-//                    destinationLatitude,
-//                    destinationLongitude,
-//
-//                    goodTypeSelected,
-//                    weight,
-//                    width,
-//                    length,
-//                    height,
-//                    vehicleTypeSelected,
-//
-//                    goodImage,
-//                    goodClassification,
-//                    goodClassificationConfidence));
-//        }
+        //Insert a new entry to the Order database using all the obtained data
+        rowID = orderDatabaseHelper.insertOrder(new Order(
+                senderImageBytesArray,
+                senderName,
+                receiverName,
+                goodDescription,
+                pickupDate,
+                pickupTime,
+                pickupLocation,
+                pickupLocationLatitude,
+                pickupLocationLongitude,
+                destination,
+                destinationLatitude,
+                destinationLongitude,
+                goodTypeSelected,
+                weight,
+                width,
+                length,
+                height,
+                vehicleTypeSelected,
+                goodImage,
+                goodClassification,
+                goodClassificationConfidence));
 
         //If the inserting of a new Order entry into the Order database is successful
         if (rowID > 0) {
-            makeToast("New order created");
+            Util.makeToast(this, "New order created");
         }
         //If the inserting of a new Order entry into the Order database is NOT successful
         else {
-            makeToast("Error creating order");
+            Util.makeToast(this, "Error creating order");
         }
 
         //Start the HomActivity
-        Intent homeActivityIntent = new Intent(NewOrder2Activity.this, HomeActivity.class);
-        startActivity(homeActivityIntent);
+        Intent homeActivityIntent = new Intent(NewOrder2Activity.this, HomeActivity.class); //Create an intent to start the HomeActivity
+        startActivity(homeActivityIntent); //Start the activity
     }
 
+    //Listener for the "Add Good Image" ImageView
     public void addGoodImageClick(View view) {
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK); //Create intent with the action to pick
+        photoPickerIntent.setType("image/*"); //Set the type of the intent to pick images
+        startActivityForResult(photoPickerIntent, GALLERY_REQUEST); //Start the activity
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
         super.onActivityResult(requestCode, resultCode, data);
 
+        //If the RESULT_OK code is received from the opened activity
         if (resultCode == RESULT_OK) {
+
+            //switch through request codes
             switch (requestCode) {
+
+                //If the request code, GALLERY_REQUEST is received
                 case GALLERY_REQUEST:
+
+                    //Process the extracted images
                     try {
-                        final Uri imageUri = data.getData();
-                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                        Bitmap image = BitmapFactory.decodeStream(imageStream);
-                        image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false);
+                        final Uri imageUri = data.getData(); //Get the Uri of the selected image
+                        final InputStream imageStream = getContentResolver().openInputStream(imageUri); //Get the InputStream from the Uri of the selected image
+                        Bitmap image = BitmapFactory.decodeStream(imageStream); //Obtain the Bitmap of the InputStream of the selected image
+                        image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false); //Scale the Bitmap based on the intended image size
 
-                        goodImageView.setImageBitmap(image);
-                        goodImage = Util.getBytesArrayFromBitmap(image);
+                        goodImageView.setImageBitmap(image); //Set the ImageView of the good to the obtained bitmap
+                        goodImage = Util.getBytesArrayFromBitmap(image); //Obtain the bytes array of the selected image
 
-                        classifyImage(image);
+                        classifyImage(image); //Classify the image using machine learning with TensorFlow
 
-                    } catch (FileNotFoundException e) {
+                    }
+                    //Catch any FileNotFoundException (i.e. if the image is not found)
+                    catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
             }
         }
     }
 
+    //Classify the selected image using machine learning with TensorFlow
     @SuppressLint("SetTextI18n")
     public void classifyImage(Bitmap image) {
         try {
+            //Create a machine learning model
             Model model = Model.newInstance(getApplicationContext());
 
             //Create inputs for reference
             TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.FLOAT32);
 
             ByteBuffer byteBuffer = ByteBuffer.allocate(4 * imageSize * imageSize * 3);
-            byteBuffer.order(ByteOrder.nativeOrder());
+            byteBuffer.order(ByteOrder.nativeOrder()); //Retrieve the native byte order of the underlying platform
 
-            int [] intValues = new int[imageSize * imageSize];
-            image.getPixels(intValues, 0, image.getWidth(), 0 , 0, image.getWidth(), image.getHeight());
+            int [] intValues = new int[imageSize * imageSize]; //Create an array of ints for each pixel in the image
+            image.getPixels(intValues, 0, image.getWidth(), 0 , 0, image.getWidth(), image.getHeight()); //Get the pixels of the image
 
             int pixel = 0;
 
+            //Traverse all the horizontal pixels of the image
             for (int i = 0; i < imageSize; i++) {
+
+                //Traverse all the vertical pixels of the image
                 for (int j = 0; j < imageSize; j++) {
                     int val = intValues[pixel++]; //RGB
 
@@ -400,16 +358,18 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
                 }
             }
 
-            inputFeature0.loadBuffer(byteBuffer);
+            inputFeature0.loadBuffer(byteBuffer); //Load the byte buffer
 
             //Run model interface and get result
             Model.Outputs outputs = model.process(inputFeature0);
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
+            //Variables for the confidence
             float[] confidences = outputFeature0.getFloatArray();
-            int maxPos = 0;
-            float maxConfidence = 0;
+            int maxPos = 0; //Position of the maximum confidence
+            float maxConfidence = 0; //Maximum confidence
 
+            //Traverse all the confidences
             for (int i = 0; i < confidences.length; i++) {
                 if (confidences[i] > maxConfidence) {
                     maxConfidence = confidences[i];
@@ -417,27 +377,19 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
                 }
             }
 
-            String[] classes = {"Chair", "Bed", "Table", "Fridge", "Computer", "Watch", "Dish", "Bread", "Pizza", "Chips", "Vegetables", "Rice", "Nuts", "Metal", "Timber", "Coal", "Dirt"};
+            //String of all the classes of the machine learning model
+            String[] classes = {"Chair", "Bed", "Table", "Fridge", "Computer", "Watch", "Dish", "Bread", "Pizza",
+                    "Chips", "Vegetables", "Rice", "Nuts", "Metal", "Timber", "Coal", "Dirt"};
 
-
-            classificationTextView.setText(classes[maxPos]);
-
-            String s = "";
-            for (int i = 0; i < classes.length; i++) {
-                s += String.format("%s: %.2f%%\n", classes[i], confidences[i] * 100);
-            }
-
-//            confidence.setText(s);
-
+            //Assign good classification member variables to later be used to save to the Orders database
             goodClassification = classes[maxPos];
             goodClassificationConfidence = maxConfidence;
 
-            confidenceTextView.setText(String.format("%.2f%%", maxConfidence*100));
+            //Set the good classification views
+            classificationTextView.setText(goodClassification); //Display the good classification text
+            confidenceTextView.setText(String.format("%.2f%%", goodClassificationConfidence*100)); //Display the good classification confidence
 
-            Log.i("Max confidence: ", maxConfidence + "");
-
-            //Release model resource if no longer used
-            model.close();
+            model.close(); //Release model resource
         }
         catch (IOException e) {
             //TODO Handle the exception

@@ -18,6 +18,7 @@ import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
 
 import java.util.Arrays;
 
+//ABOUT: Activity to allow the user to select a Map location via Map autocompletion
 public class PlacesActivity extends AppCompatActivity {
 
     @Override

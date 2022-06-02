@@ -128,8 +128,8 @@ public class OrderRecyclerViewAdapter extends RecyclerView.Adapter<OrderRecycler
 
     //Interface to be implemented by HomeActivity and MyOrdersActivity
     public interface OnOrderListener {
-        void onOrderClick(int position); //Listener method to override in MyOrdersActivity
-        void onSpeakClick(int position);
-        void onShareClick(int position);
+        void onOrderClick(int position); //Listener method to open up the order - for HomeActivity and MyOrdersActivity
+        void onSpeakClick(int position); //Listener method for speech to text feature - for HomeActivity and MyOrdersActivity
+        void onShareClick(int position); //Listener method to share the order - for HomeActivity and MyOrdersActivity
     }
 }

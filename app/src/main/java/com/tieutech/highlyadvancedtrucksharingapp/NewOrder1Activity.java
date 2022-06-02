@@ -7,10 +7,7 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.TimePicker;
-
-import com.tieutech.highlyadvancedtrucksharingapp.R;
 import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -33,6 +30,7 @@ public class NewOrder1Activity extends AppCompatActivity {
     // variables for order details
     String destination = null;
 
+    //Map variables
     double locationLatitude, locationLongitude;
     double destinationLatitude, destinationLongitude;
 
@@ -47,7 +45,6 @@ public class NewOrder1Activity extends AppCompatActivity {
         pickupTimeTimePicker = (TimePicker) findViewById(R.id.pickupTimeTimePicker);
         pickupLocationEditText = (EditText) findViewById(R.id.pickupLocationEditText);
         destinationEditText = (EditText) findViewById(R.id.destinationEditText);
-
 
         //Listener for the CalendarView
         pickupDateCalendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -68,7 +65,7 @@ public class NewOrder1Activity extends AppCompatActivity {
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
                 // TODO Auto-generated method stub
-                pickupTime = String.valueOf(hourOfDay).toString() + ":" + String.valueOf(minute).toString();
+                pickupTime = String.valueOf(hourOfDay).toString() + ":" + String.valueOf(minute).toString(); //Extract the TimePicker value and store it in the pickupTime variable
             }
         });
     }
@@ -76,34 +73,41 @@ public class NewOrder1Activity extends AppCompatActivity {
     //Listener for the "Pickup Location" EditText
     public void locationClick(View view)
     {
-        Intent intent = new Intent(this, PlacesActivity.class);
-        intent.putExtra("requestCode", Util.PICK_LOCATION_REQUEST);
-        startActivityForResult(intent, Util.PICK_LOCATION_REQUEST);
+        Intent intent = new Intent(this, PlacesActivity.class); //Start the PlacesActivity to allow Maps autocomplete selection
+        intent.putExtra("requestCode", Util.PICK_LOCATION_REQUEST); //Add the pickup location request code to the intent
+        startActivityForResult(intent, Util.PICK_LOCATION_REQUEST); //Start the activity and listen for the request code
     }
 
     //Listener for the "Destination" EditText
     public void destinationClick(View view)
     {
-        Intent intent = new Intent(this, PlacesActivity.class);
-        intent.putExtra("requestCode", Util.PICK_DESTINATION_REQUEST);
-        startActivityForResult(intent, Util.PICK_DESTINATION_REQUEST);
+        Intent intent = new Intent(this, PlacesActivity.class); //Start the PlacesActivity to allow Maps autocomplete selection
+        intent.putExtra("requestCode", Util.PICK_DESTINATION_REQUEST); //Add the destination request code to the intent
+        startActivityForResult(intent, Util.PICK_DESTINATION_REQUEST); //Start the activity and listen for the request code
     }
 
     //Check results returned from the locationClick and destinationClick
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //Listen for the request code for the pickup location selection
         if (requestCode == Util.PICK_LOCATION_REQUEST && resultCode == RESULT_OK)
         {
-            pickupLocation = data.getStringExtra(Util.AUTOCOMPLETE_PICKUP_LOCATION);
-            pickupLocationEditText.setText(pickupLocation);
+            pickupLocation = data.getStringExtra(Util.AUTOCOMPLETE_PICKUP_LOCATION); //Extract the pickup location String
+            pickupLocationEditText.setText(pickupLocation); //Set the text of the pickup location view
+
+            //Extract the latitude and longitude of the pickup location selection
             locationLatitude = data.getDoubleExtra(Util.AUTOCOMPLETE_PICKUP_LOCATION_LATITUDE, 0);
             locationLongitude = data.getDoubleExtra(Util.AUTOCOMPLETE_PICKUP_LOCATION_LONGITUDE, 0);
         }
+
+        //Listen for the request code for the destination selection
         else if (requestCode == Util.PICK_DESTINATION_REQUEST && resultCode == RESULT_OK)
         {
-            destination = data.getStringExtra(Util.AUTOCOMPLETE_DESTINATION);
-            destinationEditText.setText(destination);
+            destination = data.getStringExtra(Util.AUTOCOMPLETE_DESTINATION); //Extract the pickup location String
+            destinationEditText.setText(destination); //Set the text of the destination view
+
+            //Extract the latitude and longitude of the destination selection
             destinationLatitude = data.getDoubleExtra(Util.AUTOCOMPLETE_DESTINATION_LATITUDE, 0);
             destinationLongitude = data.getDoubleExtra(Util.AUTOCOMPLETE_DESTINATION_LONGITUDE, 0);
         }
@@ -122,27 +126,24 @@ public class NewOrder1Activity extends AppCompatActivity {
             pickupDate = df2.format(date);
         }
 
-        //Obtain the pickup Time entered
+        //Obtain the pickup time entered
         if (pickupTime == null) {
             pickupTime = String.valueOf(pickupTimeTimePicker.getHour()) + ":" + String.valueOf(pickupTimeTimePicker.getMinute());
         }
 
-//        //Obtain the receiver name entered
-//        pickupLocation = pickupLocationEditText.getText().toString();
-
-
-        // mandatory data
+        //If any of the necessary location data are missing
         if (receiverName == "" || pickupDate == null || pickupTime == null || pickupLocation == "" || destination == "")
         {
             Util.makeToast(getApplicationContext(), "Please fill in all required fields!");
         }
-        //Start the NewOrder2Activity and send data to it
+
+        //Create intent to start the NewOrder2Activity
         Intent newOrderActivityIntent = new Intent(NewOrder1Activity.this, NewOrder2Activity.class);
+
+        //Send data to the
         newOrderActivityIntent.putExtra(Util.DATA_RECEIVER_NAME, receiverName);
         newOrderActivityIntent.putExtra(Util.DATA_PICKUP_DATE, pickupDate);
         newOrderActivityIntent.putExtra(Util.DATA_PICKUP_TIME, pickupTime);
-
-
         newOrderActivityIntent.putExtra(Util.DATA_PICKUP_LOCATION, pickupLocation);
         newOrderActivityIntent.putExtra(Util.DATA_PICKUP_LOCATION_LATITUDE, locationLatitude);
         newOrderActivityIntent.putExtra(Util.DATA_PICKUP_LOCATION_LONGITUDE, locationLongitude);
@@ -150,6 +151,7 @@ public class NewOrder1Activity extends AppCompatActivity {
         newOrderActivityIntent.putExtra(Util.DATA_DESTINATION_LATITUDE, destinationLatitude);
         newOrderActivityIntent.putExtra(Util.DATA_DESTINATION_LONGITUDE, destinationLongitude);
 
+        //Start the activity
         startActivity(newOrderActivityIntent);
     }
 }

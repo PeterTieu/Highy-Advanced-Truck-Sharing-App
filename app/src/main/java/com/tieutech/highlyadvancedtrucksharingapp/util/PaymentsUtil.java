@@ -1,17 +1,13 @@
 package com.tieutech.highlyadvancedtrucksharingapp.util;
 
 import android.content.Context;
-
 import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.Wallet;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.tieutech.highlyadvancedtrucksharingapp.Constants;
 
 /**

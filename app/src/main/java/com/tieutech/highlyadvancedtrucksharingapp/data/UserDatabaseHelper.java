@@ -42,7 +42,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase); //Call onCreate(..) as defined above
     }
 
-
     //Called by listener of Save Button in SignUpActivity
     //Function: Inserts a user to the SQLiteDatabase, then returns the rowID
     public long insertUser(User user) {
@@ -67,7 +66,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         //Return the row ID if insert was successful, and -1 if it failed
         return rowId;
     }
-
 
     // Called by listener of loginButton in MainActivity
     // Checks to see if the user exists in the SQLiteDatabase - and returns a boolean

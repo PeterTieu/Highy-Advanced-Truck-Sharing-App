@@ -71,6 +71,5 @@ public class MyOrderRecyclerViewAdapter extends RecyclerView.Adapter<MyOrderRecy
             toReceiverUsernameTextView = (TextView) itemView.findViewById(R.id.toReceiverUsernameTextView);
             goodDescriptionTextView = (TextView) itemView.findViewById(R.id.goodDescriptionTextView);
         }
-
     }
 }

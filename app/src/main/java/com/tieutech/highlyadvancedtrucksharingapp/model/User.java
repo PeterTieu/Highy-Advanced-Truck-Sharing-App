@@ -3,6 +3,7 @@ package com.tieutech.highlyadvancedtrucksharingapp.model;
 //ABOUT: Class for each User object
 public class User {
 
+    //Variables
     private byte[] userImage; //Display picture
     private String userFullName; //Full name
     private String username; //Username
