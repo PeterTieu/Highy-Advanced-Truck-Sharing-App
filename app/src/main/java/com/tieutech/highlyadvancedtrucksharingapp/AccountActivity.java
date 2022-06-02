@@ -244,6 +244,10 @@ public class AccountActivity extends AppCompatActivity {
                 Intent myOrdersActivity = new Intent(AccountActivity.this, MyOrdersActivity.class);
                 startActivity(myOrdersActivity);
                 return true;
+            case R.id.action_logout:
+                Intent mainActivity = new Intent(AccountActivity.this, MainActivity.class);
+                startActivity(mainActivity);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

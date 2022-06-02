@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -152,6 +155,40 @@ public class OrderDetailsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    //Create the options menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    //Define actions for selected options menu items
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_home:
+                Intent mainActivityIntent = new Intent(OrderDetailsActivity.this, HomeActivity.class);
+                startActivity(mainActivityIntent);
+                return true;
+            case R.id.action_account:
+                Intent accountActivityIntent = new Intent(OrderDetailsActivity.this, AccountActivity.class);
+                startActivity(accountActivityIntent);
+                return true;
+            case R.id.action_orders:
+                Intent myOrdersActivity = new Intent(OrderDetailsActivity.this, MyOrdersActivity.class);
+                startActivity(myOrdersActivity);
+                return true;
+            case R.id.action_logout:
+                Intent mainActivity = new Intent(OrderDetailsActivity.this, MainActivity.class);
+                startActivity(mainActivity);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     //Listener for the "Get Estimate" Button

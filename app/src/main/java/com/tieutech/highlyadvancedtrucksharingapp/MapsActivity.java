@@ -13,7 +13,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -71,6 +75,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     TextView destinationTextView;
     TextView fareTextView;
     TextView travelTimeTextView;
+    ImageView messageDriverImageView;
 
     //Data variables
     byte[] senderImageByteArray;
@@ -100,6 +105,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         destinationTextView = findViewById(R.id.destinationTextView);
         fareTextView = findViewById(R.id.fareTextView);
         travelTimeTextView = findViewById(R.id.travelTimeTextView);
+        messageDriverImageView = findViewById(R.id.messageDriverImageView);
+
+        messageDriverImageView.setImageResource(R.drawable.ic_message);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -384,6 +392,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             intent.setData(Uri.parse("tel: 0401020304"));
             startActivity(intent);
         }
+    }
+
+    //Listener for Message Driver ImageView
+    public void messageDriverClick(View view) {
+        Intent intent = new Intent(this, MessageActivity.class);
+        startActivity(intent);
     }
 
 }

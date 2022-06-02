@@ -153,5 +153,6 @@ public class NewOrder1Activity extends AppCompatActivity {
 
         //Start the activity
         startActivity(newOrderActivityIntent);
+        finish();
     }
 }

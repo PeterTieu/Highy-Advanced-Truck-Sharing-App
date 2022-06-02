@@ -47,8 +47,19 @@ public class MainActivity extends AppCompatActivity {
                     editor.apply(); //Commit SharedPreferences changes to hard drive
 
                     makeToast("Successfully Logged In!");
-                    Intent homeIntent = new Intent(MainActivity.this, HomeActivity.class);
-                    startActivity(homeIntent);
+
+                    if (activeUsername.equals("truck driver")) {
+                        Intent intent = new Intent(MainActivity.this, TruckerDriverChatsActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    else {
+                        Intent homeIntent = new Intent(MainActivity.this, HomeActivity.class);
+                        startActivity(homeIntent);
+                        finish();
+                    }
+
+
                 }
                 else {
                     makeToast("The user does not exist!");

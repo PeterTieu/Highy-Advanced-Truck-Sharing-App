@@ -284,6 +284,7 @@ public class NewOrder2Activity extends AppCompatActivity implements AdapterView.
         //Start the HomActivity
         Intent homeActivityIntent = new Intent(NewOrder2Activity.this, HomeActivity.class); //Create an intent to start the HomeActivity
         startActivity(homeActivityIntent); //Start the activity
+        finish();
     }
 
     //Listener for the "Add Good Image" ImageView

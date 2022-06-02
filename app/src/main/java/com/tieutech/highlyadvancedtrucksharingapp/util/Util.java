@@ -1,8 +1,10 @@
 package com.tieutech.highlyadvancedtrucksharingapp.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -97,6 +99,21 @@ public class Util{
     public static final int SPINNER_GOOD_TYPE = 1;
     public static final int SPINNER_VEHICLE_TYPE = 2;
 
+    //Chat
+    public static final String CHATS = "chats";
+    public static final String USERS = "users";
+    public static final String TIME_STAMP = "time_stamp";
+    public static final String LAST_MESSAGE = "last_message";
+    public static final String LAST_MESSAGE_TIME = "last_message_time";
+    public static final String UNREAD_COUNT = "unread_count";
+
+    //Message
+    public static final String MESSAGE = "message";
+    public static final String MESSAGE_ID = "message_ID";
+    public static final String MESSAGE_TIME = "message_time";
+    public static final String MESSAGE_SENDER = "message_sender";
+    public static final String MESSAGES = "messages";
+
     // function to create a toast
     public static void makeToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
@@ -130,5 +147,18 @@ public class Util{
     public static Bitmap getBitmapFromDrawable(Context context, int drawable) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), drawable);
         return bitmap;
+    }
+
+    @SuppressLint("MissingPermission")
+    public  static  boolean connectionAvailable(Context context){
+        ConnectivityManager connectivityManager  = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if(connectivityManager !=null && connectivityManager.getActiveNetwork() !=null)
+        {
+            return  connectivityManager.getActiveNetworkInfo().isAvailable();
+        }
+        else {
+            return  false;
+        }
     }
 }

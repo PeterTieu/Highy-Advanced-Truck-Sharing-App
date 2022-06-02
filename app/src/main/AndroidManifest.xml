@@ -17,6 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TruckSharingApp">
         <activity
+            android:name=".MessageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TruckerDriverChatsActivity"
+            android:exported="false" />
+        <activity
             android:name=".FingerprintActivity"
             android:exported="false" />
         <activity
