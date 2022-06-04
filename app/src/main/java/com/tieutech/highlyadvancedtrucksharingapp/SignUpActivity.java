@@ -56,7 +56,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     //Request variable
     final int GALLERY_REQUEST = 100;
-    public static final int AUTOFILL_REQUEST = 200;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,92 +142,5 @@ public class SignUpActivity extends AppCompatActivity {
         else {
             Util.makeToast(this, "You haven't picked an image yet!");
         }
-
-        //Request code received for the auto-filling of the fields
-        if (reqCode == AUTOFILL_REQUEST)
-        {
-            FirebaseVisionImage image; //Create FirebaseVisionImage
-
-            try {
-                image = FirebaseVisionImage.fromFilePath(getApplicationContext(), data.getData()); //Obtain the image
-
-                FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance().getOnDeviceTextRecognizer(); //Create the FirebaseVisionTextRecognizer object
-
-                //Start a task to process text recognition from the selected image
-                Task<FirebaseVisionText> firebaseVisionTextTask = textRecognizer.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-
-                    //Listener for the success of the task
-                    @Override
-                    public void onSuccess(FirebaseVisionText result) {
-
-                        //Traverse all text blocks (i.e. blocks of texts in the selected image)
-                        for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
-
-                            //Traverse all the lines within a text block
-                            for (FirebaseVisionText.Line line: block.getLines()) {
-
-                                int lineCount = line.getElements().size(); //Count of the line
-                                int index = 0; //Index of the line
-
-                                //For as long as the index of the line is lower than the line count
-                                while (index < lineCount) {
-                                    FirebaseVisionText.Element element = line.getElements().get(index); //Get the elements in the line
-                                    String text = element.getText().toLowerCase(Locale.ROOT); //Obtain lowercase characters of the entire line
-
-                                    //If the line is related the name of the user
-                                    if (text.contains("name") || element.getText().contains("Name") || element.getText().contains("NAME")) {
-                                        //Traverse all the lines
-                                        for (int i = index + 1; i < lineCount - 1; i++) {
-                                            fullNameEditText.append(line.getElements().get(i).getText() + " "); //Get the elements of the line and add it to the fullNameEditText
-                                        }
-                                        fullNameEditText.append(line.getElements().get(lineCount - 1).getText());
-                                        break;
-                                    }
-
-                                    //If the line is related the username of the user
-                                    else if (text.contains("user") || element.getText().contains("User") || element.getText().contains("USER")) {
-                                        //Traverse all the lines
-                                        for (int i = index + 1; i < lineCount - 1; i++) {
-                                            signUpUserNameEditText.append(line.getElements().get(i).getText() + " "); //Get the elements of the line and add it to the signUpUserNameEditText
-                                        }
-                                        signUpUserNameEditText.append(line.getElements().get(lineCount - 1).getText());
-                                        break;
-                                    }
-
-                                    //If the line is related to the phone number of the user
-                                    else if (text.contains("phone") || element.getText().contains("Phone") || element.getText().contains("PHONE") || element.getText().contains("Ph")) {
-                                        phoneNumberEditText.append(line.getElements().get(index+1).getText()); //Get the elements of the line and add it to the phoneNumberEditText
-                                        break;
-                                    }
-                                    else {
-                                        index++;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                })
-                        //Listener for the failure of the text recognition autocomplete
-                        .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Util.makeToast(getApplicationContext(), "an error has occurred!");
-                            }
-                        });
-            }
-            //Catch for any IOException
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    //Listener for the "Autofill fields using image" text
-    public void autofillFieldsClick(View view) {
-        Intent intent = new Intent(); //Create a new intent
-        intent.setType("image/*"); //Set the type of the intent to pick images
-        intent.setAction(Intent.ACTION_GET_CONTENT); //Set action to get content
-        startActivityForResult(Intent.createChooser(intent, "Select Image"), AUTOFILL_REQUEST); //Start the activity and send the AUTOFILL_REQUEST request code
     }
 }
