@@ -20,7 +20,7 @@ import java.util.List;
 //Links the data of each item to be displayed in the RecyclerView to the RecyclerView itself
 public class OrderRecyclerViewAdapter extends RecyclerView.Adapter<OrderRecyclerViewAdapter.ViewHolder> {
 
-    //======= DEFINE VARIABLES =======
+    //======= DECLARE VARIABLES =======
     private List<Order> orders; //Arraylist of Orders for the RecyclerView
     private Context context; //Application Context
     private OnOrderListener onOrderClick; //Interface defining methods to override in the MainActivity

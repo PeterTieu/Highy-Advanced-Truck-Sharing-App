@@ -44,7 +44,7 @@
             android:padding="15dp" />
 
         <ImageView
-            android:id="@+id/sendIcon"
+            android:id="@+id/sendIconImageView"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:padding="8dp"

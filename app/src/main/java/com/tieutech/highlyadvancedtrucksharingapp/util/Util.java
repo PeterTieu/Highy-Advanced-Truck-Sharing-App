@@ -95,17 +95,9 @@ public class Util{
     public static final String DATA_GOOD_CLASSIFICATION_CONFIDENCE = "data_good_classification_confidence";
     public static final String DATA_GOOD_DESCRIPTION = "data_good_description";
 
-    //Spinner data
-    public static final int SPINNER_GOOD_TYPE = 1;
-    public static final int SPINNER_VEHICLE_TYPE = 2;
-
     //Chat
     public static final String CHATS = "chats";
     public static final String USERS = "users";
-    public static final String TIME_STAMP = "time_stamp";
-    public static final String LAST_MESSAGE = "last_message";
-    public static final String LAST_MESSAGE_TIME = "last_message_time";
-    public static final String UNREAD_COUNT = "unread_count";
 
     //Message
     public static final String MESSAGE = "message";

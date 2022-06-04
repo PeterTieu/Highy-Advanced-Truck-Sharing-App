@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -28,83 +26,100 @@ import com.google.firebase.database.ServerValue;
 import com.tieutech.highlyadvancedtrucksharingapp.adapter.MessageRecyclerViewAdapter;
 import com.tieutech.highlyadvancedtrucksharingapp.model.Message;
 import com.tieutech.highlyadvancedtrucksharingapp.util.Util;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
+//ABOUT: Activity to display the message thread between a specific User and the Truck Driver
 public class MessageActivity extends AppCompatActivity {
 
-    private RecyclerView messagesRecyclerView;
+    //View variables
     private SwipeRefreshLayout messagesSwipeRefresh;
-    private ImageView sendIcon;
+    private ImageView sendIconImageView;
     private EditText messageEditText;
-    private DatabaseReference mRootReference;
-    private FirebaseAuth firebaseAuth;
-    private String loggedInUsername;
-    private String driverUsername = "truck driver";
-    private String receiverUsername;
+
+    //RecyclerView variables
+    private ArrayList<Message> messagesList = new ArrayList<>();
     private MessageRecyclerViewAdapter recyclerViewAdapter;
-    private ArrayList<Message> messages = new ArrayList<>();
+    private RecyclerView messagesRecyclerView;
 
-    private int currentPage = 1;
-    private static final int RECORD_PER_PAGE = 30;
-
+    //Firebase Realtime Database variables
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference mRootReference;
     private DatabaseReference databaseReference;
     private ChildEventListener childEventListener;
+
+    //Data variables
+    private String loggedInUsername;
+    private String driverUsername = "truck driver"; //Define the Truck Driver's user name as "truck driver"
+    private String receiverUsername;
+
+    //Other variables
+    private int currentPage = 1; //Key for the current page - used to refresh the page
+    private static final int RECORD_PER_PAGE = 25; //Number of records in the page
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-        sendIcon = findViewById(R.id.sendIcon);
-        messageEditText = findViewById(R.id.enterMessageEditText);
-
-
-        messagesRecyclerView = findViewById(R.id.messagesRecyclerView);
-        messagesSwipeRefresh = findViewById(R.id.messagesSwipeRefresh);
+        //Obtain views
+        messagesRecyclerView = findViewById(R.id.messagesRecyclerView); //RecyclerView to display messages in the message thread
+        messagesSwipeRefresh = findViewById(R.id.messagesSwipeRefresh); //Swipe refresh
+        messageEditText = findViewById(R.id.enterMessageEditText); //EditText to enter a message
+        sendIconImageView = findViewById(R.id.sendIconImageView); //Icon to send the message
 
         // get the logged in user's username from shared preferences and assign it to the respective variable
         SharedPreferences prefs = getSharedPreferences(Util.SHARED_PREF_DATA, MODE_PRIVATE);
         loggedInUsername = prefs.getString(Util.SHARED_PREF_ACTIVE_USERNAME, "");
 
+        //If the user logged in is "truck driver"
         if (loggedInUsername.equals("truck driver"))
         {
             Intent intent = getIntent();
-            receiverUsername = intent.getStringExtra(Util.MESSAGE_SENDER);
+            receiverUsername = intent.getStringExtra(Util.MESSAGE_SENDER); //Get the value of the receiver from the ChatRecyclerViewAdapter
         }
+        //If the user logged in is anyone but the "truck driver"
         else
         {
             receiverUsername = driverUsername;
         }
 
+        //Obtain the FirebaseAuthentication instance
         firebaseAuth = FirebaseAuth.getInstance();
+
+        //Obtain a reference to the FirebaseAuthentication instance
         mRootReference = FirebaseDatabase.getInstance().getReference();
 
-        recyclerViewAdapter = new MessageRecyclerViewAdapter(messages, this);
+        //Set up RecyclerView
+        recyclerViewAdapter = new MessageRecyclerViewAdapter(messagesList, this); //Link the recyclerViewAdapter to the list of messages
+        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this)); //Set the layout of the RecyclerView
+        messagesRecyclerView.setAdapter(recyclerViewAdapter); //Link the adapter to the RecyclerView
 
-        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        messagesRecyclerView.setAdapter(recyclerViewAdapter);
-        loadMessages();
-        messagesRecyclerView.scrollToPosition(messages.size());
+        loadMessages(); //Load all the messages in the message thread
+
+        messagesRecyclerView.scrollToPosition(messagesList.size()); //Scroll to the bottom of the RecyclerView
+
+        //Add listener to refresh the list
         messagesSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 currentPage++;
-                loadMessages();
+                loadMessages(); //Load all the messages in the message thread
             }
         });
 
-
-        sendIcon.setOnClickListener(new View.OnClickListener() {
+        //Listener for the "Send" Button
+        sendIconImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //If there is a connection with the
                 if (Util.connectionAvailable(getApplicationContext()))
                 {
-                    String message = messageEditText.getText().toString();
-                    DatabaseReference userMessagePush = mRootReference.child(Util.MESSAGES).child(loggedInUsername).child(driverUsername).push();
-                    String messageID = userMessagePush.getKey();
-                    sendMessage(message, messageID);
+                    String message = messageEditText.getText().toString(); //Obtain the text typed into the messageEditText
+
+                    DatabaseReference userMessagePush = mRootReference.child(Util.MESSAGES).child(loggedInUsername).child(driverUsername).push(); //Push the message to the Firebase Realtime Database
+                    String messageID = userMessagePush.getKey(); //Obtain the messageID of the sent message
+                    sendMessage(message, messageID); //Send the message
                 }
                 else
                 {
@@ -127,19 +142,19 @@ public class MessageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_home:
+            case R.id.action_home: //HomeActivity
                 Intent mainActivityIntent = new Intent(MessageActivity.this, HomeActivity.class);
                 startActivity(mainActivityIntent);
                 return true;
-            case R.id.action_account:
+            case R.id.action_account: //AccountActivity
                 Intent accountActivityIntent = new Intent(MessageActivity.this, AccountActivity.class);
                 startActivity(accountActivityIntent);
                 return true;
-            case R.id.action_orders:
+            case R.id.action_orders: //MyOrdersActivity
                 Intent myOrdersActivity = new Intent(MessageActivity.this, MyOrdersActivity.class);
                 startActivity(myOrdersActivity);
                 return true;
-            case R.id.action_logout:
+            case R.id.action_logout: //MainActivity
                 Intent mainActivity = new Intent(MessageActivity.this, MainActivity.class);
                 startActivity(mainActivity);
                 return true;
@@ -148,25 +163,32 @@ public class MessageActivity extends AppCompatActivity {
         }
     }
 
+    //Load all the messages in the message thread
     private void loadMessages()
     {
-        messages.clear();
-        databaseReference = mRootReference.child(Util.MESSAGES).child(loggedInUsername).child(receiverUsername);
+        messagesList.clear(); //Clear the list of messages
+        databaseReference = mRootReference.child(Util.MESSAGES).child(loggedInUsername).child(receiverUsername); //Obtain the database reference
 
+        //Obtain the reference to the "messages" node of the Firebase Realtime Database
         Query messageQuery = databaseReference.limitToLast(currentPage * RECORD_PER_PAGE);
+
+        //If the listener for the reference to the "messages" node of the Firebase Realtime Database
         if (childEventListener != null)
         {
-            messageQuery.removeEventListener(childEventListener);
+            messageQuery.removeEventListener(childEventListener); //Remove the listener
         }
 
+        //Define the listener for the reference to the "messages" node of the Firebase Realtime Database
         childEventListener = new ChildEventListener() {
+
+            //If a new child is added to the "message" node
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Message message = snapshot.getValue(Message.class);
-                messages.add(message);
-                recyclerViewAdapter.notifyDataSetChanged();
-                messagesRecyclerView.scrollToPosition(messages.size()-1);
-                messagesSwipeRefresh.setRefreshing(false);
+                messagesList.add(message); //Add the message
+                recyclerViewAdapter.notifyDataSetChanged(); //Update the RecyclerView
+                messagesRecyclerView.scrollToPosition(messagesList.size()-1); //Scroll to the bottom of the RecyclerView
+                messagesSwipeRefresh.setRefreshing(false); //Do not invoke the refreshing of the message thread
             }
 
             @Override
@@ -190,40 +212,54 @@ public class MessageActivity extends AppCompatActivity {
             }
         };
 
-        messageQuery.addChildEventListener(childEventListener);
+        messageQuery.addChildEventListener(childEventListener); //Link the listener of the node child (defined above) to the "messages" node child
     }
 
+    //Send the message
     private void sendMessage(String message, String messageID)
     {
         try {
+
+            //If the message does exists (i.e characters were typed into the enterMessageEditText immediately before selection of the sendIconImageView)
             if (!message.equals(""))
             {
-                HashMap messageMap = new HashMap();
-                HashMap chatsMap = new HashMap();
-                messageMap.put(Util.MESSAGE, message);
-                messageMap.put(Util.MESSAGE_ID, messageID);
-                messageMap.put(Util.MESSAGE_SENDER, loggedInUsername);
-                messageMap.put(Util.MESSAGE_TIME, ServerValue.TIMESTAMP);
+                //Declare HashMaps for the Message and Chats to store values
+                HashMap messageMap = new HashMap();     //HashMap for the Message
+                HashMap chatsMap = new HashMap();       //HashMap for the Chat of the Message
 
-                chatsMap.put(Util.MESSAGE, message);
-                chatsMap.put(Util.MESSAGE_SENDER, loggedInUsername);
-                chatsMap.put(Util.MESSAGE_TIME, ServerValue.TIMESTAMP);
+                //Add values to the Message HashMap
+                messageMap.put(Util.MESSAGE, message); //Add message text
+                messageMap.put(Util.MESSAGE_ID, messageID); //Add messageID
+                messageMap.put(Util.MESSAGE_SENDER, loggedInUsername); //Add username of the sender
+                messageMap.put(Util.MESSAGE_TIME, ServerValue.TIMESTAMP); //Add time the message was sent
 
-                String currentUserRef = Util.MESSAGES + "/" + loggedInUsername + "/" + receiverUsername;
-                String driverRef = Util.MESSAGES + "/" + receiverUsername + "/" + loggedInUsername;
+                //Add values to the Chats HashMap
+                chatsMap.put(Util.MESSAGE, message); //Add the message
+                chatsMap.put(Util.MESSAGE_SENDER, loggedInUsername); //Add the username of the sender
+                chatsMap.put(Util.MESSAGE_TIME, ServerValue.TIMESTAMP); //Add the time the message was sent
 
+                //Define unique identifiers of the senders
+                String currentUserReference = Util.MESSAGES + "/" + loggedInUsername + "/" + receiverUsername; //Username chatting with the Truck Driver
+                String truckDriverReference = Util.MESSAGES + "/" + receiverUsername + "/" + loggedInUsername; //Username of the Truck Driver
+
+                //Get the current user of the Chat
                 String chatCurrentUserRef = Util.CHATS + "/" + loggedInUsername;
 
+                //Declare HashMap for the user
                 HashMap messageUserMap = new HashMap();
-                messageUserMap.put(currentUserRef + "/" + messageID, messageMap);
-                messageUserMap.put(driverRef + "/" + messageID, messageMap);
+                messageUserMap.put(currentUserReference + "/" + messageID, messageMap);
+                messageUserMap.put(truckDriverReference + "/" + messageID, messageMap); //Add the HashMap of the Truck Driver
 
-                messageEditText.setText("");
+                messageEditText.setText(""); //Reset the text of the messageEditText to a blank one
 
+                //If the logged in username is not that of the driver's
                 if (!loggedInUsername.equals(driverUsername))
                 {
-                    HashMap chatMap = new HashMap();
-                    chatMap.put(chatCurrentUserRef, chatsMap);
+                    HashMap chatMap = new HashMap(); //Declare HashMap for the chat
+
+                    chatMap.put(chatCurrentUserRef, chatsMap); //Add the HashMap of the chat
+
+                    //Check if there are any errors related to updating the Chat associated with the message thread
                     mRootReference.updateChildren(chatMap, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
@@ -235,7 +271,7 @@ public class MessageActivity extends AppCompatActivity {
                     });
                 }
 
-
+                //Check if there are any errors related to updating the message thread
                 mRootReference.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
